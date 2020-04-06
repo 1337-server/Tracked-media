@@ -58,10 +58,6 @@ class WhatsOn(AbstractRequestHandler):
         return is_intent_name("WhatsOn")(handler_input)# and (attr.get("readBoth") is False)
 
     def handle(self,handler_input):
-        # TODO be able to check for the date coming from alexa might be in the format
-        # 2020-W15
-        # 2020-05
-        # 2021
         # Get the value of the users auth token
         h=handler_input.request_envelope.context.system.user.access_token
         # set the default to use todays datetime
@@ -84,8 +80,6 @@ class WhatsOn(AbstractRequestHandler):
             'trakt-api-version':'2',
             'trakt-api-key':clientid,
         }
-        # return handler_input.response_builder.response
-        # _date gives 2020-04-17 format
         _type=get_slot_value(handler_input=handler_input,slot_name="typeMedia")
         _date=get_slot_value(handler_input=handler_input,slot_name="thedate")
         if _date is None:
@@ -107,16 +101,12 @@ class WhatsOn(AbstractRequestHandler):
                 # lets send a request for lists
                 r=requests.get(url,headers=headers)
 
-                # attributes = handler_input.attributes_manager.session_attributes()
-
+                
                 if r.status_code==200 or r.status_code==201:
                     dcode=json.loads(r.text)
                     print(json.dumps(dcode,sort_keys=True,indent=4))
                     i=0
                     while i<len(dcode):
-                        # for j in range(len(dcode2)):
-                        # we need to parse the list and try to find the movie requested
-                        # TODO need to save the _title into the session
                         _title=str(dcode[i]["movie"]['title'])
                         attr["movie"][i]=_title
                         # print(_title)
@@ -165,8 +155,6 @@ class WhatsOn(AbstractRequestHandler):
                     i=0
                      
                     while i<len(dcode2):
-                        # for j in range(len(dcode2)):
-                        # we need to parse the list and try to find the movie requested
                         _title=str(dcode2[i]["show"]['title'])
                         attr["show"][i]=_title                        
                         # print(_title)
@@ -189,7 +177,6 @@ class WhatsOn(AbstractRequestHandler):
                     else:
                         handler_input.response_builder.speak("you have no new episodes on "+str(z)).ask("")
                         return handler_input.response_builder.response
-                        # print("you have no new movies or episodes on today")
                 else:
                     if z==m:
                         handler_input.response_builder.speak(
@@ -202,7 +189,7 @@ class WhatsOn(AbstractRequestHandler):
                         attr["readShows"]=True
                         return handler_input.response_builder.response
             else:
-                handler_input.response_builder.speak("Im sorry i couldnt understand what you midea type you wanted").ask("Try saying, Alexa ask Radar what is on.")
+                handler_input.response_builder.speak("Im sorry i couldnt understand what you media type you wanted").ask("Try saying, Alexa ask Radar what is on.")
                 return handler_input.response_builder.response
                 #no idea what they user wanted
         
@@ -219,13 +206,8 @@ class WhatsOn(AbstractRequestHandler):
             print(json.dumps(dcode,sort_keys=True,indent=4))
             i=0
             while i<len(dcode):
-                # for j in range(len(dcode2)):
-                # we need to parse the list and try to find the movie requested
                 _title=str(dcode[i]["movie"]['title'])
                 attr["movie"][i]=_title
-                # print(_title)
-                # _traktid=dcode[i]['ids']['trakt']
-                # exit("yeet")
                 _movieitemcount+=1
                 i+=1
             if (len(dcode)-1)<0:
@@ -243,13 +225,8 @@ class WhatsOn(AbstractRequestHandler):
             print(json.dumps(dcode2,sort_keys=True,indent=4))
             i=0
             while i<len(dcode2):
-                # for j in range(len(dcode2)):
-                # we need to parse the list and try to find the movie requested
                 _title=str(dcode2[i]["show"]['title'])
                 attr["show"][i]=_title
-                # print(_title)
-                # _traktid=dcode[i]['ids']['trakt']
-                # exit("yeet")
                 _showitemcount+=1
                 i+=1
             if (len(dcode2)-1)<0:
@@ -266,7 +243,6 @@ class WhatsOn(AbstractRequestHandler):
             else:
                 handler_input.response_builder.speak("you have no new movies or episodes on "+str(z)).ask("")
                 return handler_input.response_builder.response
-                # print("you have no new movies or episodes on today")
         else:
             if z==m:
                 handler_input.response_builder.speak(
@@ -307,21 +283,13 @@ class FindShow(AbstractRequestHandler):
             'trakt-api-version':'2',
             'trakt-api-key':clientid,
         }
-        # showName
-        # return handler_input.response_builder.response
         movie=get_slot_value(handler_input=handler_input,slot_name="showName")
-        # TODO search the movie var and strip  "on my list" from the end incase Alexa fucks up
-        #
         b=bak.search(movie,headers,"show",True)
         if b['error'] is True:
             # handle this
             reprompt='_'
             handler_input.response_builder.speak("I couldnt find the show you requested").ask(reprompt)
             return handler_input.response_builder.response
-
-        # check if its a show or a movie
-        # force our movie/show object into a small var to make things easier
-        # we dont need this
         y=b['show']
 
         t=bak.search_lists(y,b,headers,"show")
@@ -370,10 +338,6 @@ class FindMovie(AbstractRequestHandler):
             reprompt='_'
             handler_input.response_builder.speak("I couldnt find the movie you requested").ask(reprompt)
             return handler_input.response_builder.response
-
-        # check if its a show or a movie
-        # force our movie/show object into a small var to make things easier
-        # we dont need this
         y=b["movie"]
 
         t=bak.search_lists(y,b,headers,"movie")
@@ -414,7 +378,6 @@ class RemoveShow(AbstractRequestHandler):
         }
         # TODO make sure we change I,II,II type movies to 1,2,3
         # and vice versa
-        # _usecustomlist = bool
         _list=get_slot_value(handler_input=handler_input,slot_name="list_name")
         movie=str(get_slot_value(handler_input=handler_input,slot_name="showName"))
 
@@ -443,15 +406,12 @@ class RemoveShow(AbstractRequestHandler):
             # this doesnt work
             _liststring=str(_list)
             if _list.lower()=='watchlist' or _list.lower()=='watch list':
-                # ((str(_list)).lower())=='watchlist'
-                # ((str(_list)).lower())=='watch list'
                 _usecustomlist=False
         # if we got nothing from the user and AND we have no pers data  set no custom list
         if _usecustomlist==None:
             _usecustomlist=False
 
         # if our list isnt empty then we can go ahead amd deal with the request
-        # TODO get this to check if list is empty or not
         if _usecustomlist:
 
             url='https://api.trakt.tv/users/me/lists/'+_list+'/items/shows'
@@ -471,24 +431,17 @@ class RemoveShow(AbstractRequestHandler):
                     if o.lower()==movie.lower():
                         _moviefound=True
                         _id=dcode[i]['show']['ids']['trakt']
-                        # print("we found it")
-                        # print(json.dumps(dcode[i], sort_keys=True, indent=4))
                         if bak.parse_delete_search('show',headers,dcode[i]['show'],_list,_usecustomlist,True):
                             reprompt='s'
                             handler_input.response_builder.speak("I have deleted "+o+" from the list "+_list).ask(
                                 reprompt)
                             return handler_input.response_builder.response
-                            # return
-                            # print("we finished and deleted")
-                            # exit("deleted")
                         else:
                             # return
                             reprompt='s'
                             handler_input.response_builder.speak(
                                 "I had trouble deleting "+o+" from the list "+_list).ask(reprompt)
                             return handler_input.response_builder.response
-                            # print("we found the film but there was an error deleting")
-                            # exit("not deleted")
                     i+=1
                 # if we failed to find the movie
                 if _moviefound==False:
@@ -513,8 +466,6 @@ class RemoveShow(AbstractRequestHandler):
             # next if statement should take care of it
             _usecustomlist=True
             reprompt=''
-
-            # todo UPDATE THE BAK.search TO THE NEW format
             # search for movie and get the object
             b=bak.search(movie,headers,"show",False)
             if b['error'] is True:
@@ -593,8 +544,6 @@ class RemoveMovie(AbstractRequestHandler):
             # this doesnt work
             _liststring=str(_list)
             if _list.lower()=='watchlist' or _list.lower()=='watch list':
-                # ((str(_list)).lower())=='watchlist'
-                # ((str(_list)).lower())=='watch list'
                 _usecustomlist=False
         # if we got nothing from the user and AND we have no pers data  set no custom list
         if _usecustomlist==None:
@@ -613,32 +562,22 @@ class RemoveMovie(AbstractRequestHandler):
                 i=0
                 _moviefound=False
                 while i<len(dcode):
-                    # print(dcode[i]['name'])
-                    # print(json.dumps(dcode[i], sort_keys=True, indent=4))
                     o=dcode[i]["movie"]['title']
-                    # print(str(o) + " is our title")
                     # if our movie name matches the movie send the request to delete it
                     if o.lower()==movie.lower():
                         _moviefound=True
                         _id=dcode[i]["movie"]['ids']['trakt']
-                        # print("we found it")
-                        # print(json.dumps(dcode[i], sort_keys=True, indent=4))
                         if bak.parse_delete_search("movie",headers,dcode[i]["movie"],_list,_usecustomlist,True):
                             reprompt='s'
                             handler_input.response_builder.speak("I have deleted "+o+" from the list "+_list).ask(
                                 reprompt)
                             return handler_input.response_builder.response
-                            # return
-                            # print("we finished and deleted")
-                            # exit("deleted")
                         else:
                             # return
                             reprompt='s'
                             handler_input.response_builder.speak(
                                 "I had trouble deleting "+o+" from the list "+_list).ask(reprompt)
                             return handler_input.response_builder.response
-                            # print("we found the film but there was an error deleting")
-                            # exit("not deleted")
                     i+=1
                 # if we failed to find the movie
                 if _moviefound==False:
@@ -652,7 +591,6 @@ class RemoveMovie(AbstractRequestHandler):
                 reprompt='s'
                 handler_input.response_builder.speak('I couldnt contact Trakt.tv API .'+url).ask(reprompt)
                 return handler_input.response_builder.response
-                # print('Error with the request to trak.tv')
         # if our user didnt give us a list or they are using the watch list
         else:
             # WE DIDNT RECIEVE A LIST
@@ -663,8 +601,6 @@ class RemoveMovie(AbstractRequestHandler):
             # next if statement should take care of it
             _usecustomlist=True
             reprompt=''
-
-            # todo UPDATE THE BAK.search TO THE NEW format
             # search for movie and get the object
             b=bak.search(movie,headers,"movie",False)
             if b['error'] is True:
@@ -698,7 +634,6 @@ class ChooseList(AbstractRequestHandler):
         return is_intent_name("ChooseList")(handler_input) and (attr.get("readBoth") is False)
 
     def handle(self,handler_input):
-        # handler_input.response_builder.speak("List chooser").ask("reprompt")
         # TODO Check that the user has supplied a value or we will throw errors
         #
         # get the value of listName and throw it onto _thelist
@@ -740,7 +675,7 @@ class ChooseList(AbstractRequestHandler):
                 handler_input.attributes_manager.persistent_attributes=session_attr
                 handler_input.attributes_manager.save_persistent_attributes()
                 return handler_input.response_builder.response
-        # if we dont have shit
+        # if we dont have anything
         session_attr=handler_input.attributes_manager.session_attributes
         if _thelist is None and session_attr['list'] is None:
             handler_input.response_builder.speak("Your List has been set to the default. This is the watchlist").ask(
@@ -767,10 +702,7 @@ class ChooseList(AbstractRequestHandler):
             dcode=json.loads(r.text)
             i=0
             while i<len(dcode):
-                # print(dcode[i]['name'])
-                # print(json.dumps(dcode[i], sort_keys=True, indent=4))
                 o=dcode[i]['ids']['slug']
-                # print(str(o) + " is our trakt slug")
                 if dcode[i]['name']==_thelist.lower():
                     _foundlist=True
                     # set the list to the user requested list
@@ -786,7 +718,6 @@ class ChooseList(AbstractRequestHandler):
                 session_attr=handler_input.attributes_manager.session_attributes
                 session_attr['usecustomlist']=False
                 session_attr['list']='watchlist'
-                # savesessionattributes as persistentattributes
                 handler_input.attributes_manager.persistent_attributes=session_attr
                 handler_input.attributes_manager.save_persistent_attributes()
                 return handler_input.response_builder.response
@@ -816,11 +747,6 @@ class AddMovie(AbstractRequestHandler):
         return (is_request_type("LaunchRequest")(handler_input) or is_intent_name("AddMovie")(handler_input))
 
     def handle(self,handler_input):
-
-        #attr=handler_input.attributes_manager.persistent_attributes
-        # _list=str(attr['list'])
-        # TODO check that the userlist persistent_attributes isnt empty
-        # get our persistent_attributes
         _perattr=handler_input.attributes_manager.persistent_attributes
         _perlist=_perattr['list']
         _usecustomlist=_perattr['usecustomlist']
@@ -1130,9 +1056,6 @@ class MovieReadOut(AbstractRequestHandler):
         _alexaOut='Here is the list of movies you asked for,  '
         i=0
         while i<_size:
-            # for j in range(len(dcode2)):
-            # we need to parse the list and try to find the movie requested
-            # TODO need to save the _title into the session
             _alexaOut+=str(x[str(i)]+",  ")
 
             i+=1
@@ -1159,7 +1082,6 @@ class ShowReadOut(AbstractRequestHandler):
         i=0
         while i<_size:
             _alexaOut+=str(x[str(i)]+",  ")
-
             i+=1
         handler_input.response_builder.speak(str(_alexaOut))
         # return handler_input.response_builder.response
