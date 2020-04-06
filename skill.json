@@ -1,0 +1,50 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-GB": {
+          "summary": "A simple app to add things to your Trakt lists",
+          "examplePhrases": [
+            "Alexa open Radar",
+            "Alexa ask Radar to add the movie The godfather",
+            "Alexa tell Radar to add the show The walking dead"
+          ],
+          "keywords": [
+            "Trakt",
+            "List",
+            "tracker",
+            "Movie"
+          ],
+          "name": "Trakt lists",
+          "smallIconUri": "file://assets/images/en-GB_smallIconUri.png",
+          "description": "A really simple App to add tv shows and movies to your watchlist",
+          "largeIconUri": "file://assets/images/en-GB_largeIconUri.png"
+        }
+      },
+      "automaticDistribution": {
+        "isActive": false
+      },
+      "isAvailableWorldwide": true,
+      "category": "TO_DO_LISTS_AND_NOTES",
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": ""
+        },
+        "interfaces": []
+      }
+    },
+    "manifestVersion": "1.0",
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "locales": {
+        "en-GB": {}
+      },
+      "isExportCompliant": true,
+      "containsAds": false,
+      "usesPersonalInfo": false
+    }
+  }
+}
