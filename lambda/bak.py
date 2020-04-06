@@ -137,7 +137,6 @@ def parse_search(typ,headers,s_obj,our_list,_usecustom=bool,p=bool):
            "people":[]
         }
         """
-    # u2= json.loads(u)
     if _usecustom:
         urll="https://api.trakt.tv/users/me/lists/"+our_list+"/items"
         # print(json.dumps(u, sort_keys=True, indent=4))
@@ -216,34 +215,20 @@ def search_lists(_movieobj,_alt,headers,_type):
     _altmovie1=_alt['2nd'][_movtype]['ids']['trakt']
     _altmovie2=_alt['3rd'][_movtype]['ids']['trakt']
     r=requests.get(url,headers=headers)
-    # print ( _movieobj [ 'ids' ] [ 'trakt' ] )
     if r.status_code==200 or r.status_code==201:
-        # print(r.text)
         dcode=json.loads(r.text)
-        # print(json.dumps(dcode, sort_keys=True, indent=4))
-        # exit(22231)
         i=0
-        # for each list in the array
-        #for i in range(len(dcode)):
         while i < len ( dcode ) :
-            #print(dcode[i]['name'])
-            # print(json.dumps(dcode[i], sort_keys=True, indent=4))
             o=dcode[i]['ids']['slug']
-            # print(str(o) + " is our trakt id")
-            # if our list name matches the list given
             url2='https://api.trakt.tv/users/me/lists/'+str(o)+'/items'
             r2=requests.get(url2,headers=headers)
             j=0
             if r2.status_code==200 or r.status_code==201:
                 dcode2=json.loads(r2.text)
                 while j < len ( dcode2 ) :
-                #for j in range(len(dcode2)):
                     # we need to parse the list and try to find the movie requested
                     _type=str(dcode2[j]['type'])
                     _traktid=dcode2[j][_type]['ids']['trakt']
-                    # print(_title)
-                    # print(_title + "  ===  " + _movieobj['ids']['trakt'])
-                    # print(json.dumps(dcode2[j][_type], sort_keys=True, indent=4))
                     #TODO THIS CAN LEAD TO SOME WONKY RESULTS IF THE USERS WANTS A SPECIFIC YEAR FILM
                     if _traktid==_movieobj['ids']['trakt'] or _traktid == _altmovie1 or _traktid == _altmovie2:
                         # print ( str ( _title ) + "  ===  " + str ( _movieobj [ 'ids' ] [ 'trakt' ] ) )
@@ -255,33 +240,25 @@ def search_lists(_movieobj,_alt,headers,_type):
                     j+=1
             i+=1
         if _foundmatch is not True:
-            # print ( "didnt find in custom list, checking watchlist" )
-            # https://api.trakt.tv/sync/watchlist
             url='https://api.trakt.tv/sync/watchlist'
             r3=requests.get(url,headers=headers)
             i=0
             if r3.status_code==200 or r.status_code==201:
                 dcode3=json.loads(r3.text)
                 for i in range(len(dcode3)):
-                    # while i < len ( dcode3 ) :
                     # we need to parse the list and try to find the movie requested
                     _type=str(dcode3[i]['type'])
                     _traktid=dcode3[i][_type]['ids']['trakt']
-                    # print(str(dcode3[i]['type']))
-                    # print ( _traktid )
-                    # print(json.dumps(dcode2[i][_type], sort_keys=True, indent=4))
                     #TODO THIS CAN LEAD TO SOME WONKY RESULTS IF THE USERS WANTS A SPECIFIC YEAR FILM
                     if _traktid==_movieobj['ids']['trakt'] or _traktid == _altmovie1 or _traktid == _altmovie2:
                         # print ( 'we found a match' )
                         a['found']=True
                         a['list']='watchlist'
                         return a
-                        #return True
-                        # _foundmatch = True
                     i+=1
                     # return False
             else:
-                print("couldnt reach trakt")
+                #print("couldnt reach trakt")
                 a['found']=False
                 a['list']=""
                 return a
