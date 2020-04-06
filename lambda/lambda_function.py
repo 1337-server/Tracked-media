@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 """Simple Alexa app."""
 
-import random
 import logging
 import json
 import prompts
 import bak
 import ask_sdk_core.utils as ask_utils
 import os
-import locale
 import requests
-import gettext
 
 from datetime import datetime
 from ask_sdk_s3.adapter import S3Adapter
@@ -27,18 +24,9 @@ from ask_sdk_model.ui import SimpleCard
 from ask_sdk_core.skill_builder import CustomSkillBuilder
 
 sb=CustomSkillBuilder(persistence_adapter=s3_adapter)
-# sb = SkillBuilder()
 logger=logging.getLogger(__name__)
-#logger.setLevel(logging.DEBUG)
 clientid: str=""
 user='me'
-is_auth=False
-
-# if you want a custom list put its full slug into the our list.
-# IT MUST BE THE FULL SLUG
-# then set the _usecustomlist =True
-our_list=''
-_usecustomlist=False
 
 # We dont need these for Alexa but lets keep em around for DEBUG offline
 access_token=''
@@ -105,12 +93,10 @@ class WhatsOn(AbstractRequestHandler):
             z=x.strftime('%Y-%m-%d')
         else:
             z=bak.validate(_date)
-            #x=datetime.strptime(_date,'%Y-%m-%d')
-            #z=x.strftime('%Y-%m-%d')
         # did they want a specific media ?
         if _type is None:
-            #we got shit
-            print("shit")
+            #we got nothing
+            print("__")
         else:
             # We got a movie ?
             _type1=str(_type).lower()
@@ -166,7 +152,6 @@ class WhatsOn(AbstractRequestHandler):
                         handler_input.response_builder.speak("You have "+str(_movieitemcount)+" new movies on "+str(z)).ask(reprompt)
                         attr["readMovies"]=True
                         return handler_input.response_builder.response
-            ############################################################################################
             if _type1=='series' or _type1=='episodes' or _type1=='shows' or _type1=='show':
                 
                 # its a tv shows
@@ -191,11 +176,9 @@ class WhatsOn(AbstractRequestHandler):
                         i+=1
                     if (len(dcode2)-1)<0:
                         print("no show items")
-                ################################################################
                 else:
                     handler_input.response_builder.speak("I couldnt reach the trakt.tv API").ask("reprompt")
                     return handler_input.response_builder.response
-                    # print("status code= "+str(r.status_code))
                 n=datetime.now()
                 m=n.strftime('%Y-%m-%d')
                 reprompt='would you like me to read them out ?'
@@ -852,7 +835,7 @@ class AddMovie(AbstractRequestHandler):
             attr["readBoth"]=False
             attr["_active_request"]=''
 
-            handler_input.response_builder.speak("Welcome you mother flipper.").ask("")
+            handler_input.response_builder.speak("Welcome.").ask("")
             return handler_input.response_builder.response
         
         # Get the value of the users auth token
@@ -899,14 +882,10 @@ class AddMovie(AbstractRequestHandler):
             # this doesnt work
             _liststring=str(_list)
             if _list.lower()=='watchlist' or _list.lower()=='watch list':
-                # ((str(_list)).lower())=='watchlist'
-                # ((str(_list)).lower())=='watch list'
                 _usecustomlist=False
 
         reprompt="Are you sure you want to add "+movie+' to your list '+_list+" ?"
-
-        # todo UPDATE THE BAK.search TO THE NEW format
-        # search for move and get the object
+        
         b=bak.search(movie,headers,showtype,False)
         if b['error'] is True:
             # handle this
@@ -949,8 +928,6 @@ class AddShow(AbstractRequestHandler):
         _perattr=handler_input.attributes_manager.persistent_attributes
         _perlist=_perattr['list']
         _usecustomlist=_perattr['usecustomlist']
-        # logger.debug("Alexa Response: {}".format(response))
-        # speech_text = 'boop2'  # + str(format(response))
         movie=get_slot_value(handler_input=handler_input,slot_name="showName")
         _list=get_slot_value(handler_input=handler_input,slot_name="list_name")
         reprompt="Are you sure you want to add "+movie+' to your list ?'
@@ -1077,9 +1054,6 @@ class LocalizationInterceptor(AbstractRequestInterceptor):
         # set default translation data to broader translation
         if locale[:2] in language_data:
             data=language_data[locale[:2]]
-            # if a more specialized translation exists, then select it instead
-            # example: "fr-CA" will pick "fr" translations first, but if "fr-CA" translation exists,
-            # then pick that instead
             if locale in language_data:
                 data.update(language_data[locale])
         else:
@@ -1140,18 +1114,6 @@ class ResponseLogger(AbstractResponseInterceptor):
 
 
 class MovieReadOut(AbstractRequestHandler):
-    """Handler for answering the quiz.
-
-    The ``handle`` method will check if the answer specified is correct,
-    by checking if it matches with the corresponding session attribute
-    value. According to the type of answer, alexa responds to the user
-    with either the next question or the final score.
-
-    Similar to the quiz handler, the question choices are
-    added to the Card or the RenderTemplate after checking if that
-    is supported.
-    """
-
     def can_handle(self,handler_input):
         # type: (HandlerInput) -> bool
         attr=handler_input.attributes_manager.session_attributes
@@ -1180,18 +1142,6 @@ class MovieReadOut(AbstractRequestHandler):
 
 
 class ShowReadOut(AbstractRequestHandler):
-    """Handler for answering the quiz.
-
-    The ``handle`` method will check if the answer specified is correct,
-    by checking if it matches with the corresponding session attribute
-    value. According to the type of answer, alexa responds to the user
-    with either the next question or the final score.
-
-    Similar to the quiz handler, the question choices are
-    added to the Card or the RenderTemplate after checking if that
-    is supported.
-    """
-
     def can_handle(self,handler_input):
         # type: (HandlerInput) -> bool
         attr=handler_input.attributes_manager.session_attributes
@@ -1208,9 +1158,6 @@ class ShowReadOut(AbstractRequestHandler):
         _alexaOut='Here is the list of shows you asked for,  '
         i=0
         while i<_size:
-            # for j in range(len(dcode2)):
-            # we need to parse the list and try to find the movie requested
-            # TODO need to save the _title into the session
             _alexaOut+=str(x[str(i)]+",  ")
 
             i+=1
@@ -1220,18 +1167,6 @@ class ShowReadOut(AbstractRequestHandler):
 
 
 class ReadBothOut(AbstractRequestHandler):
-    """Handler for answering the quiz.
-
-    The ``handle`` method will check if the answer specified is correct,
-    by checking if it matches with the corresponding session attribute
-    value. According to the type of answer, alexa responds to the user
-    with either the next question or the final score.
-
-    Similar to the quiz handler, the question choices are
-    added to the Card or the RenderTemplate after checking if that
-    is supported.
-    """
-
     def can_handle(self,handler_input):
         # type: (HandlerInput) -> bool
         attr=handler_input.attributes_manager.session_attributes
@@ -1251,18 +1186,12 @@ class ReadBothOut(AbstractRequestHandler):
         _alexaOut='Here is the list of shows you asked for,  '
         i=0
         while i<_size:
-            # for j in range(len(dcode2)):
-            # we need to parse the list and try to find the movie requested
-            # TODO need to save the _title into the session
             _alexaOut+=str(x[str(i)]+",  ")
 
             i+=1
         j=0
         _alexaOut+=str(",  Here are the list of movies, ")
         while j<_size2:
-            # for j in range(len(dcode2)):
-            # we need to parse the list and try to find the movie requested
-            # TODO need to save the _title into the session
             _alexaOut+=str(z[str(j)]+",  ")
 
             j+=1
