@@ -5,6 +5,6 @@ It supports Adding/Removing shows or movies Via "Add the movie {MovieName}" or "
 
 You can set your default list or pick the list you want to add a specific list Via "Add the movie {MovieName} to my list {ListName}"
 
-You can ask Alexa to tell what shows are on your calandar for x day Via "Whats on today" or "whats on next week" or "whats on {DATE}" It can also read out the shows. however this is very buggy.
+You can ask Alexa to tell what shows are on your calandar for x day Via "Whats on today" or "whats on next week" or "whats on {DATE}" It can also read out the shows.
 
 Still buggy and has some issues
