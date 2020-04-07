@@ -28,7 +28,7 @@ from ask_sdk_core.skill_builder import CustomSkillBuilder
 
 sb = CustomSkillBuilder(persistence_adapter=s3_adapter)
 logger = logging.getLogger(__name__)
-clientid: str = "4b27e6c8627a79b16b9ef914e1397f65f422179d7c1ff43468a93478400fcabd"
+clientid: str = "YOUR API CLIENT ID"
 user = 'me'
 is_auth = False
 
