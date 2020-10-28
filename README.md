@@ -1,6 +1,6 @@
 # Trakt.tv Alexa skill
 
-A simple app to connect to the Trakt.tv API and add/remove shows/movies from a Trakt list
+A simple app to connect to the Trakt.tv API and add/remove shows/movies from a Trakt list from Alexa voice
 
 ## Installation
 
