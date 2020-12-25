@@ -433,6 +433,21 @@
                         "say again",
                         "repeat"
                     ]
+                },
+                {
+                    "name": "GetPopular",
+                    "slots": [
+                        {
+                            "name": "list",
+                            "type": "AMAZON.Genre"
+                        }
+                    ],
+                    "samples": [
+                        "Check the list {list}",
+                        "get the {list} list",
+                        "Check the {list} list",
+                        "get the list {list}"
+                    ]
                 }
             ],
             "types": []
