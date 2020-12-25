@@ -1,6 +1,22 @@
 # Trakt.tv Alexa skill
 
-A simple app to connect to the Trakt.tv API and add/remove shows/movies from a Trakt list from Alexa voice
+A simple app/skill to connect to the Trakt.tv API via your own trakt.tv account.
+
+This skill will let you 
+ - Add/Remove movies from any of your Trakt lists.
+ - Add/Remove shows from any of your Trakt lists.
+ - Get and readout popular lists supported lists are
+     - Box Office
+     - Trending
+     - Popular
+     - Watched
+     - Collected
+     - Anticipated
+ - Add all missing movies/shows from the supported lists
+ - Change your default list (initally this is set to watchlist)
+     - This lets you save time later by not have to mention the list you want to add too
+ 
+ 
 
 ## Installation
 
