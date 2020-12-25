@@ -4,6 +4,20 @@
       "invocationName": "radar",
       "intents": [
         {
+          "name": "AMAZON.NoIntent",
+          "samples": [
+            "na",
+            "no"
+          ]
+        },
+        {
+          "name": "AMAZON.YesIntent",
+          "samples": [
+            "aye",
+            "Yes"
+          ]
+        },
+        {
           "name": "AMAZON.CancelIntent",
           "samples": []
         },
@@ -13,7 +27,12 @@
         },
         {
           "name": "AMAZON.StopIntent",
-          "samples": []
+          "samples": [
+            "quit",
+            "exit",
+            "end",
+            "stop"
+          ]
         },
         {
           "name": "AddMovie",
@@ -339,12 +358,16 @@
             {
               "name": "showName",
               "type": "AMAZON.TVSeries"
+            },
+            {
+              "name": "list_name",
+              "type": "AMAZON.FictionalCharacter"
             }
           ],
           "samples": [
             "add the show {showName} to the list",
-            "add the series {showName} to the list",
-            "add the show {showName} to the wanted list",
+            "add the series {showName} to the list {list_name}",
+            "add the show {showName} to the {list_name}",
             "add the series {showName} to the wanted list",
             "add the show {showName}",
             "add the series {showName}"
@@ -386,26 +409,49 @@
             }
           ],
           "samples": [
-            "what is on in {thedate}",
-            "what is on trakt {thedate}",
-            "what {typeMedia} are on {thedate}",
-            "what is on trakt on {thedate}",
-            "what {typeMedia} are on",
-            "What is on the {thedate}",
-            "What is on {thedate}",
-            "What is on",
-            "Whats on",
-            "Whats on {thedate}",
+            "what is on my trakt calandar {thedate}",
+            "what is on my trakt calandar in {thedate}",
+            "what is on my trakt calandar for {thedate}",
+            "what {typeMedia} are on my trakt calandar {thedate}",
+            "what is on my trakt caladar on {thedate}",
+            "what {typeMedia} are on my trakt calandar",
+            "What is on my trakt calandar on the {thedate} ",
+            "What is on my calandar",
+            "Whats on my calandar",
+            "Whats on my calandar {thedate}",
             "what is on my calandar on {thedate}",
             "whats on my calandar for {thedate}",
             "what is on my calandar {thedate}",
             "what is on my calandar for {thedate}",
-            "What is on today"
+            "What is on my calandar today"
+          ]
+        },
+        {
+          "name": "AMAZON.RepeatIntent",
+          "samples": [
+            "say that again",
+            "say again",
+            "repeat"
+          ]
+        },
+        {
+          "name": "GetPopular",
+          "slots": [
+            {
+              "name": "list",
+              "type": "AMAZON.Genre"
+            }
+          ],
+          "samples": [
+            "Check the list {list}",
+            "get the {list} list",
+            "Check the {list} list",
+            "get the list {list}"
           ]
         }
       ],
       "types": []
     }
   },
-  "version": "30"
+  "version": "43"
 }

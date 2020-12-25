@@ -16,8 +16,8 @@
             "Movie"
           ],
           "name": "Trakt lists",
-          "smallIconUri": "file://assets/images/en-GB_smallIconUri.png",
           "description": "A really simple App to add tv shows and movies to your watchlist",
+          "smallIconUri": "file://assets/images/en-GB_smallIconUri.png",
           "largeIconUri": "file://assets/images/en-GB_largeIconUri.png"
         }
       },
@@ -31,7 +31,7 @@
     "apis": {
       "custom": {
         "endpoint": {
-          "uri": ""
+          "uri": "link to your own endpoint!"
         },
         "interfaces": []
       }
@@ -42,8 +42,8 @@
       "locales": {
         "en-GB": {}
       },
-      "isExportCompliant": true,
       "containsAds": false,
+      "isExportCompliant": true,
       "usesPersonalInfo": false
     }
   }

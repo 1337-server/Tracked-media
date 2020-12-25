@@ -80,7 +80,7 @@ class WhatsOn(AbstractRequestHandler) :
         attr['active_request'] = ''
 
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.")
@@ -300,7 +300,7 @@ class FindShow(AbstractRequestHandler) :
         h = handler_input.request_envelope.context.system.user.access_token
         showtype = 'show'
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.").ask(reprompt)
@@ -350,7 +350,7 @@ class FindMovie(AbstractRequestHandler) :
         h = handler_input.request_envelope.context.system.user.access_token
         showtype = "movie"
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.").ask(reprompt)
@@ -396,7 +396,7 @@ class RemoveShow(AbstractRequestHandler) :
         # Get the value of the users auth token
         h = handler_input.request_envelope.context.system.user.access_token
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.").ask(reprompt)
@@ -529,7 +529,7 @@ class RemoveMovie(AbstractRequestHandler) :
         # Get the value of the users auth token
         h = handler_input.request_envelope.context.system.user.access_token
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.").ask(reprompt)
@@ -670,7 +670,7 @@ class ChooseList(AbstractRequestHandler) :
         h = handler_input.request_envelope.context.system.user.access_token
 
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.").ask("reprompt")
@@ -797,7 +797,7 @@ class AddMovie(AbstractRequestHandler) :
         _usecustomlist = False
         showtype = "movie"
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.")  # .ask(reprompt)
@@ -862,7 +862,7 @@ class AddShow(AbstractRequestHandler) :
         h = handler_input.request_envelope.context.system.user.access_token
         showtype = 'show'
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.").ask(reprompt)
@@ -1246,7 +1246,7 @@ class ReadBothOut(AbstractRequestHandler) :
         attr['readBoxOffice']=False
         handler_input.response_builder.speak("Im sorry i didnt understand.")
         return handler_input.response_builder.response
-
+#get popular lists and add them to our list
 class GetPopular(AbstractRequestHandler):
     
     def can_handle(self,handler_input) :
@@ -1282,7 +1282,7 @@ class GetPopular(AbstractRequestHandler):
             #return handler_input.response_builder.response
         url = "https://api.trakt.tv/movies/"+_listtype
         # If we are not auth, let the user know
-        if len(h)<3 :
+        if h is None:
             handler_input.response_builder.speak("There is a problem with authorisation, please logout and log back in.")
             return handler_input.response_builder.response
         # Set all our headers for the trakt-api
