@@ -1,31 +1,30 @@
 # -*- coding: utf-8 -*-
 """Simple Alexa app."""
 
-import random
+import random  # noqa F401
 import logging
 import json
 import prompts
 import bak
-import ask_sdk_core.utils as ask_utils
+import ask_sdk_core.utils as ask_utils  # noqa F401
 import os
-import locale
+import locale  # noqa F401
 import requests
-import gettext
+import gettext  # noqa F401
 
 from datetime import datetime
 from ask_sdk_s3.adapter import S3Adapter
-
-s3_adapter = S3Adapter(bucket_name=os.environ["S3_PERSISTENCE_BUCKET"])
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_core.utils import get_slot_value
 from ask_sdk_core.utils import is_request_type, is_intent_name
-from ask_sdk_model import Response, session
+from ask_sdk_model import Response, session  # noqa F401
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import (AbstractRequestHandler, AbstractExceptionHandler,
                                               AbstractRequestInterceptor, AbstractResponseInterceptor)
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_core.skill_builder import CustomSkillBuilder
 
+s3_adapter = S3Adapter(bucket_name=os.environ["S3_PERSISTENCE_BUCKET"])
 sb = CustomSkillBuilder(persistence_adapter=s3_adapter)
 logger = logging.getLogger(__name__)
 clientid: str = "********CLIENT API ID*****"
@@ -46,8 +45,7 @@ movie = ''
 showtype = "movie"
 speech_text = ''
 _listnamepretty = ''
-##
-##our default headers, not really needed for Alexa
+# our default headers, not really needed for Alexa
 headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + access_token, 'trakt-api-version': '2',
            'trakt-api-key': clientid}
 
@@ -96,7 +94,9 @@ class WhatsOn(AbstractRequestHandler):
             x = datetime.now()
             z = x.strftime('%Y-%m-%d')
         else:
-            z = bak.validate(_date)  # x=datetime.strptime(_date,'%Y-%m-%d')  # z=x.strftime('%Y-%m-%d')
+            z = bak.validate(_date)
+            # x=datetime.strptime(_date,'%Y-%m-%d')
+            # z=x.strftime('%Y-%m-%d')
         # did they want a specific media ?
         if _type is None:
             # we got shit
@@ -140,7 +140,8 @@ class WhatsOn(AbstractRequestHandler):
                         return handler_input.response_builder.response
                     else:
                         handler_input.response_builder.speak("you have no new movies on " + str(z))
-                        return handler_input.response_builder.response  # print("you have no new movies or episodes on today")
+                        return handler_input.response_builder.response
+                        # print("you have no new movies or episodes on today")
                 else:
                     reprompt = 'Would you like me to read the list out ?'
                     if z == m:
@@ -148,14 +149,16 @@ class WhatsOn(AbstractRequestHandler):
                             _movieitemcount) + " new movies on today. Would you like me to read the list out ?").ask(
                             reprompt)
                         attr["readMovies"] = True
-                        return handler_input.response_builder.response  # return build_response(attributes,build_speechlet_response("radar", "speech_output", reprompt,False))
+                        return handler_input.response_builder.response
+                        # return build_response(attributes,build_speechlet_response("radar",
+                        # "speech_output", reprompt,False))
                     else:
                         handler_input.response_builder.speak(
                             "You have " + str(_movieitemcount) + " new movies on " + str(
                                 z) + ". Would you like me to read the list out ?").ask(reprompt)
                         attr["readMovies"] = True
                         return handler_input.response_builder.response
-            ############################################################################################
+            # Series
             if _type1 == 'series' or _type1 == 'episodes' or _type1 == 'shows' or _type1 == 'show':
                 # its a tv shows
                 url2 = "https://api.trakt.tv/calendars/my/shows/" + str(z) + "/7"
@@ -177,7 +180,7 @@ class WhatsOn(AbstractRequestHandler):
                         i += 1
                     if (len(dcode2) - 1) < 0:
                         print("no show items")
-                ################################################################
+                # something broke or we have nothing
                 else:
                     handler_input.response_builder.speak("I couldnt reach the trakt.tv API").ask("reprompt")
                     return handler_input.response_builder.response  # print("status code= "+str(r.status_code))
@@ -207,7 +210,7 @@ class WhatsOn(AbstractRequestHandler):
             # not sure what we got
             else:
                 handler_input.response_builder.speak(
-                    "Im sorry i couldnt understand what you midea type you wanted").ask(
+                    "Im sorry i couldnt understand what you type you wanted").ask(
                     "Try saying, Alexa ask Radar what is on.")
                 return handler_input.response_builder.response  # no idea what they user wanted
 
@@ -270,7 +273,8 @@ class WhatsOn(AbstractRequestHandler):
                 return handler_input.response_builder.response
             else:
                 handler_input.response_builder.speak("you have no new movies or episodes on " + str(z))
-                return handler_input.response_builder.response  # print("you have no new movies or episodes on today")
+                return handler_input.response_builder.response
+                # print("you have no new movies or episodes on today")
         else:
             if z == m:
                 handler_input.response_builder.speak("You have " + str(_movieitemcount) + " new movies and " + str(
