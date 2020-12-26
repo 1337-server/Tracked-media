@@ -34,11 +34,17 @@ settings should look something like this
 With that done, You can use the JSON editor and copy all of package.json into the JSON editor
 
 After that you need to upload the lambda folder to either Alexa hosted or your own host.
+You will need to edit lambda_function.py and find 
 
-Save, build and deploy, and you should be good to enable the app in your Alexa app.
+```clientid: str = "********CLIENT API ID*****"```
+and change it to your own Trakt Client ID key. Dont remove the quotes
+
+
+Save & build and then deploy, and you should be good to enable the app in your Alexa app.
 
 >"SKILLS AND GAMES" -> "Your Skills" -> "Dev"
 
+Enabling the app should take you to trakt.tv where you login and grants your own app access to your trakt.tv account.
 ## Usage
 ###### Adding/removing movies or shows
 ```python
@@ -90,6 +96,10 @@ Save, build and deploy, and you should be good to enable the app in your Alexa a
 
 "Alexa ask %myinvocationname Check the list Anticipated"
 ```
+
+### This app/skill uses the Trakt.tv API 
+
+<img src="https://raw.githubusercontent.com/1337-server/Trakt.tv-Alexa-skill/master/assets/images/trakt-wide-red-black.png" width="300" />
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
