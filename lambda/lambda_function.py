@@ -85,13 +85,14 @@ class WhatsOn(AbstractRequestHandler):
         if h is None:
             reprompt = 's'
             handler_input.response_builder.speak(
-                "There is a problem with authorisation, please logout and log back in.")
+                "There is a problem with authorisation, "
+                "please logout and log back in.")
             return handler_input.response_builder.response
         # Set all our headers for the trakt-api
         headers = {'Content-Type': 'application/json',
                    'Authorization': 'Bearer ' + h,
                    'trakt-api-version': '2',
-                   'trakt-api-key': clientid, }
+                   'trakt-api-key': clientid}
         # return handler_input.response_builder.response
         # _date gives 2020-04-17 format
         _type = get_slot_value(handler_input=handler_input, slot_name="typeMedia")
@@ -361,7 +362,7 @@ class FindMovie(AbstractRequestHandler):
     def handle(self, handler_input):
         # Get the value of the users auth token
         h = handler_input.request_envelope.context.system.user.access_token
-        showtype = "movie"
+        showtype = "movie"  # noqa F841
         # If we are not auth, let the user know
         if h is None:
             reprompt = 's'
@@ -446,7 +447,7 @@ class RemoveShow(AbstractRequestHandler):
         else:
             _usecustomlist = True
             # this doesnt work
-            _liststring = str(_list)
+            _liststring = str(_list)  # noqa F841
             if _list.lower() == 'watchlist' or _list.lower() == 'watch list':
                 # ((str(_list)).lower())=='watchlist'
                 # ((str(_list)).lower())=='watch list'
@@ -473,7 +474,7 @@ class RemoveShow(AbstractRequestHandler):
                     # if our movie name matches the movie send the request to delete it
                     if o.lower() == movie.lower():
                         _moviefound = True
-                        _id = dcode[i]['show']['ids']['trakt']
+                        _id = dcode[i]['show']['ids']['trakt']  # noqa F841
                         # print("we found it")
                         # print(json.dumps(dcode[i], sort_keys=True, indent=4))
                         if bak.parse_delete_search('show', headers, dcode[i]['show'], _list, _usecustomlist, True):
@@ -583,7 +584,7 @@ class RemoveMovie(AbstractRequestHandler):
         else:
             _usecustomlist = True
             # this doesnt work
-            _liststring = str(_list)
+            _liststring = str(_list)  # noqa F841
             if _list.lower() == 'watchlist' or _list.lower() == 'watch list':
                 # ((str(_list)).lower())=='watchlist'
                 # ((str(_list)).lower())=='watch list'
@@ -610,7 +611,7 @@ class RemoveMovie(AbstractRequestHandler):
                     # if our movie name matches the movie send the request to delete it
                     if o.lower() == movie.lower():
                         _moviefound = True
-                        _id = dcode[i]["movie"]['ids']['trakt']
+                        _id = dcode[i]["movie"]['ids']['trakt']  # noqa F841
                         # print("we found it")
                         # print(json.dumps(dcode[i], sort_keys=True, indent=4))
                         if bak.parse_delete_search("movie", headers, dcode[i]["movie"], _list, _usecustomlist, True):
@@ -678,7 +679,7 @@ class ChooseList(AbstractRequestHandler):
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        attr = handler_input.attributes_manager.session_attributes
+        attr = handler_input.attributes_manager.session_attributes  # noqa F841
         return is_intent_name("ChooseList")(handler_input)
 
     def handle(self, handler_input):
@@ -692,7 +693,7 @@ class ChooseList(AbstractRequestHandler):
 
         # If we are not auth, let the user know
         if h is None:
-            reprompt = 's'
+            reprompt = 's'  # noqa F841
             handler_input.response_builder.speak(
                 "There is a problem with authorisation, please logout and log back in.").ask("reprompt")
             return handler_input.response_builder.response
@@ -1358,8 +1359,9 @@ class GetPopular(AbstractRequestHandler):
                 attr['repeat'] = ''
                 # TODO DONT KNOW IF ITS TRULY MISSING,
                 # IT COULD BE THEY DONT HAVE THEM WATCHED/list BUT IN COLLECTION
-                handler_input.response_builder.speak("you are missing " + str(len(_notfound)) + " out of 10 from the " +
-                                                     _listtype
+                handler_input.response_builder.speak("you are missing " + str(len(_notfound)) +
+                                                     " out of 10 from the "
+                                                     + _listtype
                                                      + " list. Do you want to hear the list ?").ask(
                     "Do you want to hear the list ?")
                 return handler_input.response_builder.response
