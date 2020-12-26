@@ -125,8 +125,8 @@ def parse_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
             {   "movies":[],
            "shows":[
              {
-                "ids": { 
-                    "trakt": """ + str(s_obj['ids']['trakt']) + """ 
+                "ids": {
+                    "trakt": """ + str(s_obj['ids']['trakt']) + """
                     }
             } ],
            "seasons":[],
@@ -173,8 +173,8 @@ def parse_delete_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
             {   "movies":[],
            "shows":[
              {
-                "ids": { 
-                    "trakt": """ + str(s_obj['ids']['trakt']) + """ 
+                "ids": {
+                    "trakt": """ + str(s_obj['ids']['trakt']) + """
                     }
             } ],
            "seasons":[],
@@ -295,7 +295,7 @@ def search_lists(_movieobj, _alt, headers, _type):
 
 def list_cache(headers):
     # A function to cache the users lists and items to make things quicker
-    _foundmatch = False
+    _foundmatch = False  # noqa F841
     a = {}
     url = 'https://api.trakt.tv/users/me/lists'
     r = requests.get(url, headers=headers)
@@ -337,8 +337,8 @@ def list_cache(headers):
                 _type = str(dcode3[i]['type'])
                 if _type == 'season':
                     _type = 'show'
-                _title = dcode3[i][_type]['title']
-                _traktid = dcode3[i][_type]['ids']['trakt']
+                _title = dcode3[i][_type]['title']  # noqa F841
+                _traktid = dcode3[i][_type]['ids']['trakt']  # noqa F841
                 # a[w][i] = {_title : _traktid}
                 a[w]['media'][i] = dcode3[i]
                 i += 1  # return False
@@ -443,7 +443,7 @@ def addOneMovie(_movieobj, _usecustom, headers, _list):
     # decode json
     if r2.status_code == 200 or r2.status_code == 201:
         # decode json
-        dcode3 = json.loads(r2.text)
+        dcode3 = json.loads(r2.text)  # noqa F841
         # lets see it
         return True
     else:
