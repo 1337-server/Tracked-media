@@ -3,3 +3,4 @@ ask-sdk-s3-persistence-adapter
 pytz
 codecov
 flake8>=2.5.0
+pytest-cov
