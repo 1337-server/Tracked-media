@@ -2,4 +2,4 @@ ask-sdk-core
 ask-sdk-s3-persistence-adapter
 pytz
 codecov
-flake8
+flake8>=2.5.0
