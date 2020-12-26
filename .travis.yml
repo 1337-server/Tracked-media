@@ -7,7 +7,7 @@ before_install:
 install: "pip install -r lambda/requirements.txt"
 script:
   - flake8 lambda
-  - coverage run lambda/bak.py
+  - coverage run lambda/lambda_function.py
   - pytest --cov=./
 after_success:
   - bash <(curl -s https://codecov.io/bash)
