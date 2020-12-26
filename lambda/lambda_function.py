@@ -18,9 +18,11 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_core.utils import get_slot_value
 from ask_sdk_core.utils import is_request_type, is_intent_name
 from ask_sdk_model import Response, session  # noqa F401
-from ask_sdk_core.skill_builder import SkillBuilder
-from ask_sdk_core.dispatch_components import (AbstractRequestHandler, AbstractExceptionHandler,
-                                              AbstractRequestInterceptor, AbstractResponseInterceptor)
+from ask_sdk_core.skill_builder import SkillBuilder  # noqa F401
+from ask_sdk_core.dispatch_components import (AbstractRequestHandler,
+                                              AbstractExceptionHandler,
+                                              AbstractRequestInterceptor,
+                                              AbstractResponseInterceptor)  # noqa F401
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_core.skill_builder import CustomSkillBuilder
 
@@ -46,17 +48,17 @@ showtype = "movie"
 speech_text = ''
 _listnamepretty = ''
 # our default headers, not really needed for Alexa
-headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + access_token, 'trakt-api-version': '2',
+headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + access_token,
+           'trakt-api-version': '2',
            'trakt-api-key': clientid}
 
 
 # Our action for finding if a show/movie is on our calendar
 class WhatsOn(AbstractRequestHandler):
     """Handler for WhatsOn Intent."""
-
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        attr = handler_input.attributes_manager.session_attributes
+        attr = handler_input.attributes_manager.session_attributes  # noqa F841
         return is_intent_name("WhatsOn")(handler_input)
 
     def handle(self, handler_input):
@@ -84,7 +86,9 @@ class WhatsOn(AbstractRequestHandler):
                 "There is a problem with authorisation, please logout and log back in.")
             return handler_input.response_builder.response
         # Set all our headers for the trakt-api
-        headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + h, 'trakt-api-version': '2',
+        headers = {'Content-Type': 'application/json',
+                   'Authorization': 'Bearer ' + h,
+                   'trakt-api-version': '2',
                    'trakt-api-key': clientid, }
         # return handler_input.response_builder.response
         # _date gives 2020-04-17 format
