@@ -1359,8 +1359,8 @@ class GetPopular(AbstractRequestHandler):
                 attr['repeat'] = ''
                 # TODO DONT KNOW IF ITS TRULY MISSING,
                 # IT COULD BE THEY DONT HAVE THEM WATCHED/list BUT IN COLLECTION
-                handler_input.response_builder.speak("you are missing " + str(len(_notfound)) +
-                                                     " out of 10 from the "
+                handler_input.response_builder.speak("you are missing " + str(len(_notfound))
+                                                     + " out of 10 from the "
                                                      + _listtype
                                                      + " list. Do you want to hear the list ?").ask(
                     "Do you want to hear the list ?")
