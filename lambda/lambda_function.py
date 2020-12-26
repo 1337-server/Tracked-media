@@ -48,7 +48,8 @@ showtype = "movie"
 speech_text = ''
 _listnamepretty = ''
 # our default headers, not really needed for Alexa
-headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + access_token,
+headers = {'Content-Type': 'application/json',
+           'Authorization': 'Bearer ' + access_token,
            'trakt-api-version': '2',
            'trakt-api-key': clientid}
 
@@ -56,6 +57,7 @@ headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + acce
 # Our action for finding if a show/movie is on our calendar
 class WhatsOn(AbstractRequestHandler):
     """Handler for WhatsOn Intent."""
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes  # noqa F841
@@ -137,7 +139,7 @@ class WhatsOn(AbstractRequestHandler):
                 n = datetime.now()
                 m = n.strftime('%Y-%m-%d')
                 reprompt = ''
-                should_end_session = False
+                should_end_session = False  # noqa F841
                 if (_movieitemcount - 1) < 0:
                     if z == m:
                         handler_input.response_builder.speak("you have no new movies today")
@@ -309,7 +311,7 @@ class FindShow(AbstractRequestHandler):
     def handle(self, handler_input):
         # Get the value of the users auth token
         h = handler_input.request_envelope.context.system.user.access_token
-        showtype = 'show'
+        showtype = 'show'  # noqa F841
         # If we are not auth, let the user know
         if h is None:
             reprompt = 's'
@@ -426,12 +428,12 @@ class RemoveShow(AbstractRequestHandler):
         _perlist = attr['list']
         _usecustomlist = attr['usecustomlist']
         # user gave us nothing lets do some checks to make sure we have saved attributes
-        if _list == None:
+        if _list is None:
             # they didnt give us a list use the default
             # attr = handler_input.attributes_manager.persistent_attributes
             _perlist = attr['list']
             # if default isnt set use watchlist
-            if _perlist == None:
+            if _perlist is None:
                 _list = 'watchlist'
                 _usecustomlist = False
             elif _perlist.lower() == 'watchlist' or _perlist.lower() == 'watch list':
@@ -450,7 +452,7 @@ class RemoveShow(AbstractRequestHandler):
                 # ((str(_list)).lower())=='watch list'
                 _usecustomlist = False
         # if we got nothing from the user and AND we have no pers data  set no custom list
-        if _usecustomlist == None:
+        if _usecustomlist is None:
             _usecustomlist = False
 
         # if our list isnt empty then we can go ahead amd deal with the request
@@ -489,7 +491,7 @@ class RemoveShow(AbstractRequestHandler):
                             # print("we found the film but there was an error deleting")  # exit("not deleted")
                     i += 1
                 # if we failed to find the movie
-                if _moviefound == False:
+                if _moviefound is False:
                     # print("we couldnt find the film")
                     reprompt = 's'
                     handler_input.response_builder.speak("i couldnt find " + movie + " on the list " + _list).ask(
@@ -563,12 +565,12 @@ class RemoveMovie(AbstractRequestHandler):
         _perlist = attr['list']
         _usecustomlist = attr['usecustomlist']
         # user gave us nothing lets do some checks to make sure we have saved attributes
-        if _list == None:
+        if _list is None:
             # they didnt give us a list use the default
             # attr = handler_input.attributes_manager.persistent_attributes
             _perlist = attr['list']
             # if default isnt set use watchlist
-            if _perlist == None:
+            if _perlist is None:
                 _list = 'watchlist'
                 _usecustomlist = False
             elif _perlist.lower() == 'watchlist' or _perlist.lower() == 'watch list':
@@ -587,7 +589,7 @@ class RemoveMovie(AbstractRequestHandler):
                 # ((str(_list)).lower())=='watch list'
                 _usecustomlist = False
         # if we got nothing from the user and AND we have no pers data  set no custom list
-        if _usecustomlist == None:
+        if _usecustomlist is None:
             _usecustomlist = False
 
         # if our list isnt empty then we can go ahead amd deal with the request
@@ -626,7 +628,7 @@ class RemoveMovie(AbstractRequestHandler):
                             # print("we found the film but there was an error deleting")  # exit("not deleted")
                     i += 1
                 # if we failed to find the movie
-                if _moviefound == False:
+                if _moviefound is False:
                     # print("we couldnt find the film")
                     reprompt = 's'
                     handler_input.response_builder.speak("i couldnt find " + movie + " on the list " + _list).ask(
@@ -751,11 +753,11 @@ class ChooseList(AbstractRequestHandler):
                     _customlist = o
                 i += 1
             # couldnt find the custom list notify and set to watchlist
-            if _foundlist == False:
+            if _foundlist is False:
                 handler_input.response_builder.speak(
                     "We couldnt find that list. Your list has been set to the default. This is the watchlist").ask(
                     "reprompt")
-                _usecustomlist = False
+                _usecustomlist = False  # noqa F841
                 # start saving the persistent attributes
                 session_attr = handler_input.attributes_manager.session_attributes
                 session_attr['usecustomlist'] = False
@@ -848,17 +850,17 @@ class AddMovie(AbstractRequestHandler):
                 _usecustomlist = False
         else:
             # TODO CHECK IF THE LIST IS watchlist
-            _usecustomlist = True
+            _usecustomlist = True  # noqa F841
             # this doesnt work
-            _liststring = str(_list)
+            _liststring = str(_list)  # noqa F841
             if _list.lower() == 'watchlist' or _list.lower() == 'watch list':
-                _usecustomlist = False
+                _usecustomlist = False  # noqa F841
         print(str(_usecustomlist))
         # search for move and get the object
         b = bak.search(movie, headers, showtype, True)
         if b['error']:
             # handle this
-            reprompt = '_'
+            reprompt = '_'  # noqa F841
             handler_input.response_builder.speak("I couldnt find the show you requested")  # .ask(reprompt)
             return handler_input.response_builder.response
         # force our movie/show object into a small var to make things easier
@@ -959,10 +961,9 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In CancelOrStopIntentHandler")
-
         # get localization data
         data = handler_input.attributes_manager.request_attributes["_"]
-        speech = data[prompts.STOP_MESSAGE]
+        speech = data[prompts.STOP_MESSAGE]  # noqa F841
         # response_builder.set_should_end_session(True)
         handler_input.response_builder.speak("lataaaa bitch")
         return handler_input.response_builder.response
@@ -997,7 +998,7 @@ class LocalizationInterceptor(AbstractRequestInterceptor):
     """
 
     def process(self, handler_input):
-        locale = handler_input.request_envelope.request.locale
+        locale = handler_input.request_envelope.request.locale  # noqa F811
         logger.info("Locale is {}".format(locale))
 
         # localized strings stored in language_strings.json
@@ -1131,28 +1132,28 @@ class ReadBothOut(AbstractRequestHandler):
             logger.info("active_request")
             _alexaOut = 'Here is the list of movies that i have added... '
             i = 0
-            #################################################################################################################
             _perattr = handler_input.attributes_manager.persistent_attributes
             # Get the value of the users auth token
             h = handler_input.request_envelope.context.system.user.access_token
             # If we are not auth, let the user know
-            if len(h) < 3:
+            if h is None:
                 handler_input.response_builder.speak(
                     "There is a problem with authorisation, please logout and log back in.")
                 return handler_input.response_builder.response
             # Set all our headers for the trakt-api
-            headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + h, 'trakt-api-version': '2',
+            headers = {'Content-Type': 'application/json',
+                       'Authorization': 'Bearer ' + h,
+                       'trakt-api-version': '2',
                        'trakt-api-key': clientid}
             # TODO find a better way to match list names
-            # they didnt give us a list use the default 
+            # they didnt give us a list use the default
             # if a list isnt set use watchlist
             if "list" in _perattr:
                 _list = _perattr["list"]
-                _usecustomlist = True
+                _usecustomlist = True  # noqa F841
             else:
                 _list = 'watchlist'
-                _usecustomlist = False
-            #################################################################################################################
+                _usecustomlist = False  # noqa F841
             while i < _size:
                 # for j in range(len(dcode2)):
                 # we need to parse the list and try to find the movie requested
@@ -1172,8 +1173,8 @@ class ReadBothOut(AbstractRequestHandler):
             attr['movie'] = {}
             return handler_input.response_builder.response
         # shows read out here
-        if attr['readShows'] and not attr['readMovies'] or is_intent_name("AMAZON.RepeatIntent") and attr[
-            'repeat'] == 'readShows':
+        if attr['readShows'] and not attr['readMovies'] or is_intent_name("AMAZON.RepeatIntent") and \
+                attr['repeat'] == 'readShows':
             attr = handler_input.attributes_manager.session_attributes
             x = attr["show"]
             _size = len(x)
@@ -1192,8 +1193,8 @@ class ReadBothOut(AbstractRequestHandler):
             attr['repeat'] = 'readShows'
             return handler_input.response_builder.response
         # movies read out here
-        if attr['readMovies'] and not attr['readShows'] or is_intent_name("AMAZON.RepeatIntent") and attr[
-            'repeat'] == 'readMovies':
+        if attr['readMovies'] and not attr['readShows'] or \
+                is_intent_name("AMAZON.RepeatIntent") and attr['repeat'] == 'readMovies':
             # movies read out here
             attr = handler_input.attributes_manager.session_attributes
             x = attr["movie"]
@@ -1317,7 +1318,9 @@ class GetPopular(AbstractRequestHandler):
                 "There is a problem with authorisation, please logout and log back in.")
             return handler_input.response_builder.response
         # Set all our headers for the trakt-api
-        headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + h, 'trakt-api-version': '2',
+        headers = {'Content-Type': 'application/json',
+                   'Authorization': 'Bearer ' + h,
+                   'trakt-api-version': '2',
                    'trakt-api-key': clientid}
         r = requests.get(url, headers=headers)
         print("status code= " + str(r.status_code))
@@ -1338,7 +1341,9 @@ class GetPopular(AbstractRequestHandler):
                 b = bak.listparser(_mywatchlist, boxoffice[i], _listtype)
                 if b is not None:
                     _notfound[j] = b
-                    j += 1  # print("got movie")  # _notfound[i] = bak.listparser(_mywatchlist,boxoffice[i],"movie")
+                    j += 1
+                    # print("got movie")
+                    # _notfound[i] = bak.listparser(_mywatchlist,boxoffice[i],"movie")
                 i += 1
             print(str(_notfound))
             if len(_notfound) > 0:
