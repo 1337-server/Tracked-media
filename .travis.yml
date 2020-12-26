@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get install libgnutls28-dev
 install: "pip install -r lambda/requirements.txt"
 script:
-  - flake8 lambda
+  - flake8 --ignore=E501 lambda
   - coverage run lambda/lambda_function.py
   - pytest --cov=./
 after_success:
