@@ -4,8 +4,13 @@ python:
   - "3.7"
 before_install:
   - sudo apt-get install libgnutls28-dev
+# Install the codecov pip dependency
+install:
+  - pip install codecov
 install: "pip install -r lambda/requirements.txt"
 script:
-  - flake8 arm
+  - flake8 lambda
+  - coverage run tests.py
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - codecov
