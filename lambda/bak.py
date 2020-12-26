@@ -1,51 +1,54 @@
-import requests
+import datetime
 import json
 import logging
-import datetime
 
-logger=logging.getLogger('tipper')
+import requests
+
+logger = logging.getLogger('tipper')
 logger.setLevel(logging.DEBUG)
 
-def validate(date_text) :
-    try :
-        c = datetime.datetime.strptime(date_text,'%Y-%m-%d')
-        print("standard"+str(c))
+
+def validate(date_text):
+    try:
+        c = datetime.datetime.strptime(date_text, '%Y-%m-%d')
+        print("standard" + str(c))
         return c.strftime('%Y-%m-%d')
-    except ValueError :
+    except ValueError:
         # raise ValueError("Incorrect data format, should be YYYY-MM-DD")
-        try :
-            r = datetime.datetime.strptime(date_text+'-1',"%Y-W%W-%w")
+        try:
+            r = datetime.datetime.strptime(date_text + '-1', "%Y-W%W-%w")
             print(r)
             return r.strftime('%Y-%m-%d')
-        except ValueError :
-            try :
-                c = datetime.datetime.strptime(date_text,'%Y')
-                print("year"+str(c))
+        except ValueError:
+            try:
+                c = datetime.datetime.strptime(date_text, '%Y')
+                print("year" + str(c))
                 return c.strftime('%Y-%m-%d')
-            except ValueError :
+            except ValueError:
                 print("fuck")
+
 
 # SIMPLE GET REQUEST TO MAKE OUR MAIN PAGE
 # LOOK NICER
-def easygeturl(url,headers,p=bool):
+def easygeturl(url, headers, p=bool):
     # lets send a request for lists
-    r=requests.get(url,headers=headers)
+    r = requests.get(url, headers=headers)
     if p is True:
-        print("status code= "+str(r.status_code))
-        if r.status_code==200 or r.status_code==201:
+        print("status code= " + str(r.status_code))
+        if r.status_code == 200 or r.status_code == 201:
             # print(r.text)
-            dcode=json.loads(r.text)
+            dcode = json.loads(r.text)
             # lets see it
             # m = dcode[1]['movie']
-            print(json.dumps(dcode[0]['name'],sort_keys=True,indent=4))
+            print(json.dumps(dcode[0]['name'], sort_keys=True, indent=4))
             # print(json.dumps(dcode, sort_keys=True, indent=4))
             return dcode[0]
         else:
-            print("status code= "+str(r.status_code))
+            print("status code= " + str(r.status_code))
             return
     else:
-        if r.status_code==200 or r.status_code==201:
-            dcode=json.loads(r.text)
+        if r.status_code == 200 or r.status_code == 201:
+            dcode = json.loads(r.text)
             return dcode[0]
         else:
             return
@@ -53,46 +56,46 @@ def easygeturl(url,headers,p=bool):
 
 # OUR MAIN SEARCH ENGINE
 # ONLY BRINGS BACK THE FIRST THREE RESULT
-def search(q,h,t,p=bool):
+def search(q, h, t, p=bool):
     # q =query
     # h =headers
     # t = type
-    url="https://api.trakt.tv/search/"+t+"?query="+q
-    m={}
-    m['error']=True
+    url = "https://api.trakt.tv/search/" + t + "?query=" + q
+    m = {}
+    m['error'] = True
     # get our info
-    r=requests.get(url,headers=h)
+    r = requests.get(url, headers=h)
     # if logging is on lets print stuff out
     if p is True:
-        print("search status code= "+str(r.status_code))
-        if r.status_code==200 or r.status_code==201:
+        print("search status code= " + str(r.status_code))
+        if r.status_code == 200 or r.status_code == 201:
             print(r.text)
-            dcode=json.loads(r.text)
+            dcode = json.loads(r.text)
             # m = dcode[0][t]
-            if len(dcode)<1:
+            if len(dcode) < 1:
                 m['error'] = True
                 return m
-            m=dcode[0]
-            #this might cause problems if we get less than 3 results
-            m['2nd']=dcode[1]
-            m['3rd']=dcode[2]
+            m = dcode[0]
+            # this might cause problems if we get less than 3 results
+            m['2nd'] = dcode[1]
+            m['3rd'] = dcode[2]
             m['error'] = False
-            print ( json.dumps ( m , sort_keys = True , indent = 4 ) )
+            print(json.dumps(m, sort_keys=True, indent=4))
             return m
         else:
             m['error'] = True
-            print("search status code= "+str(r.status_code))
+            print("search status code= " + str(r.status_code))
             return m
     else:
-        if r.status_code==200 or r.status_code==201:
-            dcode=json.loads(r.text)
-            if len(dcode)<1:
+        if r.status_code == 200 or r.status_code == 201:
+            dcode = json.loads(r.text)
+            if len(dcode) < 1:
                 m['error'] = True
                 return m
-            m=dcode[0]
-            #this might cause problems if we get less than 3 results
-            m['2nd']=dcode[1]
-            m['3rd']=dcode[2]
+            m = dcode[0]
+            # this might cause problems if we get less than 3 results
+            m['2nd'] = dcode[1]
+            m['3rd'] = dcode[2]
             m['error'] = False
             return m
         else:
@@ -101,13 +104,13 @@ def search(q,h,t,p=bool):
     return m
 
 
-def parse_search(typ,headers,s_obj,our_list,_usecustom=bool,p=bool):
-    if typ=='movie':
-        values="""
+def parse_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
+    if typ == 'movie':
+        values = """
         {   "movies":[
           {
             "ids": {
-              "trakt": """+str(s_obj['ids']['trakt'])+"""
+              "trakt": """ + str(s_obj['ids']['trakt']) + """
             }
           }
         ],
@@ -118,12 +121,12 @@ def parse_search(typ,headers,s_obj,our_list,_usecustom=bool,p=bool):
     }
     """
     else:
-        values="""
+        values = """
             {   "movies":[],
            "shows":[
              {
                 "ids": { 
-                    "trakt": """+str(s_obj['ids']['trakt'])+""" 
+                    "trakt": """ + str(s_obj['ids']['trakt']) + """ 
                     }
             } ],
            "seasons":[],
@@ -133,29 +136,29 @@ def parse_search(typ,headers,s_obj,our_list,_usecustom=bool,p=bool):
         """
     # u2= json.loads(u)
     if _usecustom:
-        urll="https://api.trakt.tv/users/me/lists/"+our_list+"/items"
+        urll = "https://api.trakt.tv/users/me/lists/" + our_list + "/items"
         # print(json.dumps(u, sort_keys=True, indent=4))
     else:
-        urll='https://api.trakt.tv/sync/watchlist'
-    r2=requests.post(urll,headers=headers,data=values)
+        urll = 'https://api.trakt.tv/sync/watchlist'
+    r2 = requests.post(urll, headers=headers, data=values)
     # decode json
-    if r2.status_code==200 or r2.status_code==201:
+    if r2.status_code == 200 or r2.status_code == 201:
         # decode json
-        dcode3=json.loads(r2.text)
+        dcode3 = json.loads(r2.text)
         # lets see it
         if p:
-            print(json.dumps(dcode3,sort_keys=True,indent=4))
+            print(json.dumps(dcode3, sort_keys=True, indent=4))
     else:
-        logger.warning('adding to list error! Status code = '+str(r2.status_code))
+        logger.warning('adding to list error! Status code = ' + str(r2.status_code))
 
 
-def parse_delete_search(typ,headers,s_obj,our_list,_usecustom=bool,p=bool):
-    if typ=='movie':
-        values="""
+def parse_delete_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
+    if typ == 'movie':
+        values = """
         {   "movies":[
           {
             "ids": {
-              "trakt": """+str(s_obj['ids']['trakt'])+"""
+              "trakt": """ + str(s_obj['ids']['trakt']) + """
             }
           }
         ],
@@ -166,12 +169,12 @@ def parse_delete_search(typ,headers,s_obj,our_list,_usecustom=bool,p=bool):
     }
     """
     else:
-        values="""
+        values = """
             {   "movies":[],
            "shows":[
              {
                 "ids": { 
-                    "trakt": """+str(s_obj['ids']['trakt'])+""" 
+                    "trakt": """ + str(s_obj['ids']['trakt']) + """ 
                     }
             } ],
            "seasons":[],
@@ -182,134 +185,136 @@ def parse_delete_search(typ,headers,s_obj,our_list,_usecustom=bool,p=bool):
     # u2= json.loads(u)
     if _usecustom:
         # https://api.trakt.tv/users/id/lists/list_id/items/remove
-        urll="https://api.trakt.tv/users/me/lists/"+our_list+"/items/remove"
+        urll = "https://api.trakt.tv/users/me/lists/" + our_list + "/items/remove"
         # print(json.dumps(u, sort_keys=True, indent=4))
     else:
-        urll='https://api.trakt.tv/sync/watchlist/remove'
-    r2=requests.post(urll,headers=headers,data=values)
+        urll = 'https://api.trakt.tv/sync/watchlist/remove'
+    r2 = requests.post(urll, headers=headers, data=values)
     # decode json
-    if r2.status_code==200 or r2.status_code==201:
+    if r2.status_code == 200 or r2.status_code == 201:
         # decode json
-        dcode3=json.loads(r2.text)
+        dcode3 = json.loads(r2.text)
         # lets see it
         if p:
-            print(json.dumps(dcode3,sort_keys=True,indent=4))
+            print(json.dumps(dcode3, sort_keys=True, indent=4))
             return True
-        #todo need to check the return results to see if its was deleted
+        # todo need to check the return results to see if its was deleted
         return True
     else:
         return False
 
-def search_lists(_movieobj,_alt,headers,_type):
-    _foundmatch=False
-    a={}
-    a['found']=False
-    a['list']=''
-    url='https://api.trakt.tv/users/me/lists'
-    _movtype=_alt['type']
-    _altmovie1=_alt['2nd'][_movtype]['ids']['trakt']
-    _altmovie2=_alt['3rd'][_movtype]['ids']['trakt']
-    r=requests.get(url,headers=headers)
+
+def search_lists(_movieobj, _alt, headers, _type):
+    _foundmatch = False
+    a = {}
+    a['found'] = False
+    a['list'] = ''
+    url = 'https://api.trakt.tv/users/me/lists'
+    _movtype = _alt['type']
+    _altmovie1 = _alt['2nd'][_movtype]['ids']['trakt']
+    _altmovie2 = _alt['3rd'][_movtype]['ids']['trakt']
+    r = requests.get(url, headers=headers)
     # print ( _movieobj [ 'ids' ] [ 'trakt' ] )
-    if r.status_code==200 or r.status_code==201:
+    if r.status_code == 200 or r.status_code == 201:
         # print(r.text)
-        dcode=json.loads(r.text)
+        dcode = json.loads(r.text)
         # print(json.dumps(dcode, sort_keys=True, indent=4))
         # exit(22231)
-        i=0
+        i = 0
         # for each list in the array
-        #for i in range(len(dcode)):
-        while i < len ( dcode ) :
-            #print(dcode[i]['name'])
+        # for i in range(len(dcode)):
+        while i < len(dcode):
+            # print(dcode[i]['name'])
             # print(json.dumps(dcode[i], sort_keys=True, indent=4))
-            o=dcode[i]['ids']['slug']
+            o = dcode[i]['ids']['slug']
             # print(str(o) + " is our trakt id")
             # if our list name matches the list given
-            url2='https://api.trakt.tv/users/me/lists/'+str(o)+'/items'
-            r2=requests.get(url2,headers=headers)
-            j=0
-            if r2.status_code==200 or r.status_code==201:
-                dcode2=json.loads(r2.text)
-                while j < len ( dcode2 ) :
-                #for j in range(len(dcode2)):
+            url2 = 'https://api.trakt.tv/users/me/lists/' + str(o) + '/items'
+            r2 = requests.get(url2, headers=headers)
+            j = 0
+            if r2.status_code == 200 or r.status_code == 201:
+                dcode2 = json.loads(r2.text)
+                while j < len(dcode2):
+                    # for j in range(len(dcode2)):
                     # we need to parse the list and try to find the movie requested
-                    _type=str(dcode2[j]['type'])
-                    _traktid=dcode2[j][_type]['ids']['trakt']
+                    _type = str(dcode2[j]['type'])
+                    _traktid = dcode2[j][_type]['ids']['trakt']
                     # print(_title)
                     # print(_title + "  ===  " + _movieobj['ids']['trakt'])
                     # print(json.dumps(dcode2[j][_type], sort_keys=True, indent=4))
-                    #TODO THIS CAN LEAD TO SOME WONKY RESULTS IF THE USERS WANTS A SPECIFIC YEAR FILM
-                    if _traktid==_movieobj['ids']['trakt'] or _traktid == _altmovie1 or _traktid == _altmovie2:
+                    # TODO THIS CAN LEAD TO SOME WONKY RESULTS IF THE USERS WANTS A SPECIFIC YEAR FILM
+                    if _traktid == _movieobj['ids']['trakt'] or _traktid == _altmovie1 or _traktid == _altmovie2:
                         # print ( str ( _title ) + "  ===  " + str ( _movieobj [ 'ids' ] [ 'trakt' ] ) )
                         # print ( 'we found a match' )
-                        a['found']=True
-                        a['list']= str(dcode[i]['name'])
+                        a['found'] = True
+                        a['list'] = str(dcode[i]['name'])
                         return a
                         # exit("yeet")
-                    j+=1
-            i+=1
+                    j += 1
+            i += 1
         if _foundmatch is not True:
             # print ( "didnt find in custom list, checking watchlist" )
             # https://api.trakt.tv/sync/watchlist
-            url='https://api.trakt.tv/sync/watchlist'
-            r3=requests.get(url,headers=headers)
-            i=0
-            if r3.status_code==200 or r.status_code==201:
-                dcode3=json.loads(r3.text)
+            url = 'https://api.trakt.tv/sync/watchlist'
+            r3 = requests.get(url, headers=headers)
+            i = 0
+            if r3.status_code == 200 or r.status_code == 201:
+                dcode3 = json.loads(r3.text)
                 for i in range(len(dcode3)):
                     # while i < len ( dcode3 ) :
                     # we need to parse the list and try to find the movie requested
-                    _type=str(dcode3[i]['type'])
-                    _traktid=dcode3[i][_type]['ids']['trakt']
+                    _type = str(dcode3[i]['type'])
+                    _traktid = dcode3[i][_type]['ids']['trakt']
                     # print(str(dcode3[i]['type']))
                     # print ( _traktid )
                     # print(json.dumps(dcode2[i][_type], sort_keys=True, indent=4))
-                    #TODO THIS CAN LEAD TO SOME WONKY RESULTS IF THE USERS WANTS A SPECIFIC YEAR FILM
-                    if _traktid==_movieobj['ids']['trakt'] or _traktid == _altmovie1 or _traktid == _altmovie2:
+                    # TODO THIS CAN LEAD TO SOME WONKY RESULTS IF THE USERS WANTS A SPECIFIC YEAR FILM
+                    if _traktid == _movieobj['ids']['trakt'] or _traktid == _altmovie1 or _traktid == _altmovie2:
                         # print ( 'we found a match' )
-                        a['found']=True
-                        a['list']='watchlist'
+                        a['found'] = True
+                        a['list'] = 'watchlist'
                         return a
-                        #return True
+                        # return True
                         # _foundmatch = True
-                    i+=1
+                    i += 1
                     # return False
             else:
                 print("couldnt reach trakt")
-                a['found']=False
-                a['list']=""
+                a['found'] = False
+                a['list'] = ""
                 return a
-                #return False
+                # return False
     else:
         # print ( "couldnt reach trakt" )
-        a['found']=False
-        a['list']=""
+        a['found'] = False
+        a['list'] = ""
         return a
-        #return False
+        # return False
     return a
 
-def list_cache(headers) :
+
+def list_cache(headers):
     # A function to cache the users lists and items to make things quicker
     _foundmatch = False
     a = {}
     url = 'https://api.trakt.tv/users/me/lists'
-    r = requests.get(url,headers=headers)
-    if r.status_code==200 or r.status_code==201 :
+    r = requests.get(url, headers=headers)
+    if r.status_code == 200 or r.status_code == 201:
         dcode = json.loads(r.text)
         # print(json.dumps(dcode, sort_keys=True, indent=4))
         i = 0
         # for each list in the array
-        while i<len(dcode) :
+        while i < len(dcode):
             o = dcode[i]['ids']['slug']
-            a[i] = {"name" : o,"media" : {}}
+            a[i] = {"name": o, "media": {}}
             # print(str(o) + " is our trakt id")
             # if our list name matches the list given
-            url2 = 'https://api.trakt.tv/users/me/lists/'+str(o)+'/items'
-            r2 = requests.get(url2,headers=headers)
+            url2 = 'https://api.trakt.tv/users/me/lists/' + str(o) + '/items'
+            r2 = requests.get(url2, headers=headers)
             j = 0
-            if r2.status_code==200 or r.status_code==201 :
+            if r2.status_code == 200 or r.status_code == 201:
                 dcode2 = json.loads(r2.text)
-                while j<len(dcode2) :
+                while j < len(dcode2):
                     # for j in range(len(dcode2)):
                     _type = str(dcode2[j]['type'])
                     _title = dcode2[j][_type]['title']
@@ -319,31 +324,31 @@ def list_cache(headers) :
                     j += 1
             i += 1
         url = 'https://api.trakt.tv/sync/watchlist'
-        r3 = requests.get(url,headers=headers)
+        r3 = requests.get(url, headers=headers)
         w = i
-        a[w] = {"name" : "watchlist","media" : {}}
+        a[w] = {"name": "watchlist", "media": {}}
         i = 0
-        if r3.status_code==200 or r.status_code==201 :
+        if r3.status_code == 200 or r.status_code == 201:
             dcode3 = json.loads(r3.text)
             # print(json.dumps(dcode3,sort_keys=True,indent=4))
-            for i in range(len(dcode3)) :
+            for i in range(len(dcode3)):
                 # while i < len ( dcode3 ) :
                 # we need to parse the list and try to find the movie requested
                 _type = str(dcode3[i]['type'])
-                if _type=='season' :
+                if _type == 'season':
                     _type = 'show'
                 _title = dcode3[i][_type]['title']
                 _traktid = dcode3[i][_type]['ids']['trakt']
                 # a[w][i] = {_title : _traktid}
                 a[w]['media'][i] = dcode3[i]
                 i += 1  # return False
-        else :
+        else:
             print("couldnt reach trakt")
             a['error'] = True
             a['found'] = False
             a['list'] = ""
             return a  # return False
-    else :
+    else:
         # print ( "couldnt reach trakt" )
         a['error'] = True
         a['found'] = False
@@ -353,54 +358,56 @@ def list_cache(headers) :
     return a
 
 
-def listparser(_mywatchlist,_boxoffice,_listtype) :
+def listparser(_mywatchlist, _boxoffice, _listtype):
     # print(_item)
     _notfound = {}
     i = 0
     # while i<len(_list) :
     # loop through each list
-    for i in range(len(_mywatchlist)) :
+    for i in range(len(_mywatchlist)):
         # print(_list)
         j = 0
         # loop through each item on the list
-        for j in range(len(_mywatchlist[i]['media'])) :
+        for j in range(len(_mywatchlist[i]['media'])):
             # while j<len(_list[i]['media']):
-            #print("my watch list item = "+str(_mywatchlist[i]['media']))
+            # print("my watch list item = "+str(_mywatchlist[i]['media']))
             # _type = str(_mywatchlist[i]['media'][j]['type'])
             # only trig for popular list every other fucking list is fine
-            if _listtype == 'popular' :
+            if _listtype == 'popular':
                 _type = _mywatchlist[i]['media'][j]['type']
-                #print(str(_boxoffice))
-                #print(str(_mywatchlist[i]['media'][j]))
+                # print(str(_boxoffice))
+                # print(str(_mywatchlist[i]['media'][j]))
                 if _type != 'season':
-                    _ids=_mywatchlist[i]['media'][j][_type]['ids']['trakt']
+                    _ids = _mywatchlist[i]['media'][j][_type]['ids']['trakt']
                     _title = _mywatchlist[i]['media'][j][_type]['title']
-                    _boxofficeids=_boxoffice['ids']['trakt']
-                    #print(str(_boxoffice))
-                    if _ids==_boxofficeids :
-                        #if _title==_boxoffice['movie']['title'] :
-                        print("we found "+_title)
+                    _boxofficeids = _boxoffice['ids']['trakt']
+                    # print(str(_boxoffice))
+                    if _ids == _boxofficeids:
+                        # if _title==_boxoffice['movie']['title'] :
+                        print("we found " + _title)
                         return  # {"":"","":""}
                     else:
                         _botitle = str(_boxoffice['title'])
-                        _notfound = {"title" : _botitle,"id" : _boxoffice['ids']['trakt']}
-            else :
+                        _notfound = {"title": _botitle, "id": _boxoffice['ids']['trakt']}
+            else:
                 _type = _mywatchlist[i]['media'][j]['type']
-                if _type=='show' or _type=='season':
+                if _type == 'show' or _type == 'season':
                     print("")
                     # _title goes here
-                    # _notfound[_botitle] = _boxoffice['movie']['ids']['trakt']  # ignore we cant match shows with box office  # _title = _mywatchlist[i]['media'][j]['movie']['title']
+                    # _notfound[_botitle] = _boxoffice['movie']['ids']['trakt']
+                    # ignore we cant match shows with box office
+                    # _title = _mywatchlist[i]['media'][j]['movie']['title']
                 # THIS IS FINE, DONT BREAK IT
                 else:
                     _title = _mywatchlist[i]['media'][j]['movie']['title']
-                    _ids=_mywatchlist[i]['media'][j]['movie']['ids']['trakt']
-                    print(str(_ids)+" ==== "+ str(_boxoffice['movie']['ids']['trakt']))
-                    if _ids ==_boxoffice['movie']['ids']['trakt'] :
-                        print("we found "+_title)
+                    _ids = _mywatchlist[i]['media'][j]['movie']['ids']['trakt']
+                    print(str(_ids) + " ==== " + str(_boxoffice['movie']['ids']['trakt']))
+                    if _ids == _boxoffice['movie']['ids']['trakt']:
+                        print("we found " + _title)
                         return  # {"":"","":""}
-                    else :
+                    else:
                         _botitle = str(_boxoffice['movie']['title'])
-                        _notfound = {"title" : _botitle,"id" : _boxoffice['movie']['ids']['trakt']}
+                        _notfound = {"title": _botitle, "id": _boxoffice['movie']['ids']['trakt']}
                         # _notfound[_botitle] = _boxoffice['movie']['ids']['trakt']
 
             j += 1
@@ -411,12 +418,13 @@ def listparser(_mywatchlist,_boxoffice,_listtype) :
         # _notfound.remove(None)
     return _notfound
 
-def addOneMovie(_movieobj,_usecustom,headers,_list):
+
+def addOneMovie(_movieobj, _usecustom, headers, _list):
     values = """
         {   "movies":[
           {
             "ids": {
-              "trakt": """+str(_movieobj['id'])+"""
+              "trakt": """ + str(_movieobj['id']) + """
             }
           }
         ],
@@ -427,17 +435,17 @@ def addOneMovie(_movieobj,_usecustom,headers,_list):
     }
     """
     # u2= json.loads(u)
-    if _usecustom :
-        urll = "https://api.trakt.tv/users/me/lists/"+_list+"/items"
-    else :
+    if _usecustom:
+        urll = "https://api.trakt.tv/users/me/lists/" + _list + "/items"
+    else:
         urll = 'https://api.trakt.tv/sync/watchlist'
-    r2 = requests.post(urll,headers=headers,data=values)
+    r2 = requests.post(urll, headers=headers, data=values)
     # decode json
-    if r2.status_code==200 or r2.status_code==201 :
+    if r2.status_code == 200 or r2.status_code == 201:
         # decode json
         dcode3 = json.loads(r2.text)
         # lets see it
         return True
-    else :
-        logger.warning('adding to list error! Status code = '+str(r2.status_code))
+    else:
+        logger.warning('adding to list error! Status code = ' + str(r2.status_code))
         return False
