@@ -31,13 +31,24 @@ settings should look something like this
 
 ![sample linking info ](sample.png)
 
-With that done, You can use the JSON editor and copy all of package.json into the JSON editor
+With that done, You can use the JSON editor and copy all of package.json into the JSON editor remember to keep the 
+```
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "Your endpoiint aws-etc-etc"
+        },
+        "interfaces": []
+      }
+    },
+```
+if you are using the Alexa hosted version!
 
 After that you need to upload the lambda folder to either Alexa hosted or your own host.
-You will need to edit lambda_function.py and find 
+You will need to edit config.py and find 
 
-```clientid: str = "********CLIENT API ID*****"```
-and change it to your own Trakt Client ID key. Dont remove the quotes
+```client_id = "your-api-key-goes-here"```
+and change it to your own Trakt Client ID key. Don't remove the quotes!
 
 
 Save & build and then deploy, and you should be good to enable the app in your Alexa app.
@@ -45,6 +56,7 @@ Save & build and then deploy, and you should be good to enable the app in your A
 >"SKILLS AND GAMES" -> "Your Skills" -> "Dev"
 
 Enabling the app should take you to trakt.tv where you login and grants your own app access to your trakt.tv account.
+
 ## Usage
 ###### Adding/removing movies or shows
 ```python
@@ -58,7 +70,7 @@ Enabling the app should take you to trakt.tv where you login and grants your own
 ```
 ###### Changing your default list
 ```python
-"Alexa tell %myinvocationname to add the show The walking dead to my list 'test'"
+"Alexa tell %myinvocationname set my list to watch list"
 
 "Alexa tell %myinvocationname set my list to 'example'"
 
