@@ -8,11 +8,11 @@ import apprise
 logger = logging.getLogger('tipper')
 logger.setLevel(logging.DEBUG)
 
+
 def notify(media_name, media_type, a_list):
     # If the user has disabled notifications
     if not config.notify:
         return True
-    
     if config.SLACK_TOKENA != "":
         try:
             # Create an Apprise instance
@@ -22,9 +22,9 @@ def notify(media_name, media_type, a_list):
             # Then notify these services any time you desire. The below would
             # notify all of the services loaded into our Apprise object.
             apobj.notify(
-                # plot.savefig('hanning{0}.pdf'.format(num)) 
-                title = config.notify_title.format(media_type),
-                body = config.notify_body.format(media_name, media_type, a_list),
+                # plot.savefig('hanning{0}.pdf'.format(num))
+                title=config.notify_title.format(media_type),
+                body=config.notify_body.format(media_name, media_type, a_list),
             )
         except Exception as e:  # noqa: E722
             logging.error("Failed sending slacks apprise notification.  continuing  processing...error was " + str(e))
@@ -34,12 +34,12 @@ def notify(media_name, media_type, a_list):
             # Create an Apprise instance
             apobj = apprise.Apprise()
             # A sample pushbullet notification
-            apobj.add('discord://' + str(config.DISCORD_WEBHOOK_ID) + '/'+ str(config.DISCORD_TOKEN))
+            apobj.add('discord://' + str(config.DISCORD_WEBHOOK_ID) + '/' + str(config.DISCORD_TOKEN))
             # Then notify these services any time you desire. The below would
             # notify all of the services loaded into our Apprise object.
             apobj.notify(
-                title = config.notify_title.format(media_type),
-                body = config.notify_body.format(media_name, media_type, a_list),
+                title=config.notify_title.format(media_type),
+                body=config.notify_body.format(media_name, media_type, a_list),
             )
         except:  # noqa: E722
             logging.error("Failed sending discord apprise notification.  Continueing processing...")

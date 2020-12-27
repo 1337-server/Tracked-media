@@ -3,7 +3,7 @@
 # Trakt.tv API key
 client_id = "your-api-key-goes-here"
 
-# Do you want notified of actions 
+# Do you want notified of actions
 notify = True
 
 # This is the title for you notifications

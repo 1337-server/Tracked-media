@@ -872,10 +872,8 @@ class AddMovie(AbstractRequestHandler):
         y = b["movie"]
         # dig through our search and add the movie/show to our list or our Watchlist
         bak.parse_search(b['type'], headers, y, _list, _usecustomlist, True)
-        title = "A new movie has been added"
-        body = "The movie " + movie  + " has been added to your " + _list + " list"
         # media_name, media_type, a_list
-        bak.notify(movie ,b['type'], _list)
+        bak.notify(movie, b['type'], _list)
         handler_input.response_builder.speak(movie + " has been added to your " + _list + " list")  # .ask(reprompt)
         return handler_input.response_builder.response
 
@@ -932,10 +930,9 @@ class AddShow(AbstractRequestHandler):
         y = b['show']
         # dig through our search and add the movie/show to our list or our Watchlist
         bak.parse_search(b['type'], headers, y, _list, _usecustomlist, True)
-        title = "A new show has been added"
-        body = "The show " + movie  + " has been added to your " + _list + " list"
-        bak.notify(movie ,b['type'], _list)
-        handler_input.response_builder.speak(movie + " show has been added to your list " + str(_list))  # .ask(reprompt)
+        bak.notify(movie, b['type'], _list)
+        handler_input.response_builder.speak(movie + " show has been added to your list " + str(_list))
+        # .ask(reprompt)
         return handler_input.response_builder.response
 
 
