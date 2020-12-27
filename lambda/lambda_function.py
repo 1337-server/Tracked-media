@@ -4,6 +4,7 @@
 import random  # noqa F401
 import logging
 import json
+import config
 import prompts
 import bak
 import ask_sdk_core.utils as ask_utils  # noqa F401
@@ -29,7 +30,9 @@ from ask_sdk_core.skill_builder import CustomSkillBuilder
 s3_adapter = S3Adapter(bucket_name=os.environ["S3_PERSISTENCE_BUCKET"])
 sb = CustomSkillBuilder(persistence_adapter=s3_adapter)
 logger = logging.getLogger(__name__)
-clientid: str = "********CLIENT API ID*****"
+# This does nothing for Alexa
+logging.basicConfig(filename='error.log', encoding='utf-8', level=logging.DEBUG)
+clientid = config.client_id
 user = 'me'
 is_auth = False
 
@@ -47,6 +50,7 @@ movie = ''
 showtype = "movie"
 speech_text = ''
 _listnamepretty = ''
+
 # our default headers, not really needed for Alexa
 headers = {'Content-Type': 'application/json',
            'Authorization': 'Bearer ' + access_token,
@@ -868,7 +872,10 @@ class AddMovie(AbstractRequestHandler):
         y = b["movie"]
         # dig through our search and add the movie/show to our list or our Watchlist
         bak.parse_search(b['type'], headers, y, _list, _usecustomlist, True)
-
+        title = "A new movie has been added"
+        body = "The movie " + movie  + " has been added to your " + _list + " list"
+        # media_name, media_type, a_list
+        bak.notify(movie ,b['type'], _list)
         handler_input.response_builder.speak(movie + " has been added to your " + _list + " list")  # .ask(reprompt)
         return handler_input.response_builder.response
 
@@ -925,9 +932,10 @@ class AddShow(AbstractRequestHandler):
         y = b['show']
         # dig through our search and add the movie/show to our list or our Watchlist
         bak.parse_search(b['type'], headers, y, _list, _usecustomlist, True)
-
-        handler_input.response_builder.speak(
-            movie + " show has been added to your list " + str(_list))  # .ask(reprompt)
+        title = "A new show has been added"
+        body = "The show " + movie  + " has been added to your " + _list + " list"
+        bak.notify(movie ,b['type'], _list)
+        handler_input.response_builder.speak(movie + " show has been added to your list " + str(_list))  # .ask(reprompt)
         return handler_input.response_builder.response
 
 

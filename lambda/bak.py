@@ -1,11 +1,48 @@
 import datetime
 import json
 import logging
-
 import requests
+import config
+import apprise
 
 logger = logging.getLogger('tipper')
 logger.setLevel(logging.DEBUG)
+
+def notify(media_name, media_type, a_list):
+    # If the user has disabled notifications
+    if not config.notify:
+        return True
+    
+    if config.SLACK_TOKENA != "":
+        try:
+            # Create an Apprise instance
+            apobj = apprise.Apprise()
+            apobj.add('slack://' + str(config.SLACK_TOKENA) + "/" + str(config.SLACK_TOKENB) + "/" + str(
+                config.SLACK_TOKENC) + "/" + str(config.SLACK_CHANNEL))
+            # Then notify these services any time you desire. The below would
+            # notify all of the services loaded into our Apprise object.
+            apobj.notify(
+                # plot.savefig('hanning{0}.pdf'.format(num)) 
+                title = config.notify_title.format(media_type),
+                body = config.notify_body.format(media_name, media_type, a_list),
+            )
+        except Exception as e:  # noqa: E722
+            logging.error("Failed sending slacks apprise notification.  continuing  processing...error was " + str(e))
+            # TODO: add userid to this and config
+    if config.DISCORD_WEBHOOK_ID != "":
+        try:
+            # Create an Apprise instance
+            apobj = apprise.Apprise()
+            # A sample pushbullet notification
+            apobj.add('discord://' + str(config.DISCORD_WEBHOOK_ID) + '/'+ str(config.DISCORD_TOKEN))
+            # Then notify these services any time you desire. The below would
+            # notify all of the services loaded into our Apprise object.
+            apobj.notify(
+                title = config.notify_title.format(media_type),
+                body = config.notify_body.format(media_name, media_type, a_list),
+            )
+        except:  # noqa: E722
+            logging.error("Failed sending discord apprise notification.  Continueing processing...")
 
 
 def validate(date_text):
