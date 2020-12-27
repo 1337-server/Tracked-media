@@ -31,7 +31,6 @@ s3_adapter = S3Adapter(bucket_name=os.environ["S3_PERSISTENCE_BUCKET"])
 sb = CustomSkillBuilder(persistence_adapter=s3_adapter)
 logger = logging.getLogger(__name__)
 # This does nothing for Alexa
-logging.basicConfig(filename='error.log', encoding='utf-8', level=logging.DEBUG)
 clientid = config.client_id
 user = 'me'
 is_auth = False
