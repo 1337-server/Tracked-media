@@ -17,7 +17,7 @@ This skill will let you
  - Add all missing movies/shows from the supported lists
  - Change your default list (initally this is set to watchlist)
      - This lets you save time later by not have to mention the list you want to add too
- 
+ - Send notifications to Discord/Slack about the shows/movies added
  
 
 ## Installation
@@ -45,10 +45,10 @@ With that done, You can use the JSON editor and copy all of package.json into th
 if you are using the Alexa hosted version!
 
 After that you need to upload the lambda folder to either Alexa hosted or your own host.
-You will need to edit config.py and find 
+You will need to edit config.py to your own liking but most importantly remember to set your Trakt.tv API key with
 
 ```client_id = "your-api-key-goes-here"```
-and change it to your own Trakt Client ID key. Don't remove the quotes!
+Don't remove the quotes!
 
 
 Save & build and then deploy, and you should be good to enable the app in your Alexa app.
