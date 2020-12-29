@@ -12,7 +12,9 @@ import os
 import locale  # noqa F401
 import requests
 import gettext  # noqa F401
+import re  # noqa: F401
 
+from ask_sdk_model.slu.entityresolution import StatusCode
 from datetime import datetime
 from ask_sdk_s3.adapter import S3Adapter
 from ask_sdk_core.handler_input import HandlerInput
@@ -30,7 +32,6 @@ from ask_sdk_core.skill_builder import CustomSkillBuilder
 s3_adapter = S3Adapter(bucket_name=os.environ["S3_PERSISTENCE_BUCKET"])
 sb = CustomSkillBuilder(persistence_adapter=s3_adapter)
 logger = logging.getLogger(__name__)
-# This does nothing for Alexa
 clientid = config.client_id
 user = 'me'
 is_auth = False
@@ -429,24 +430,27 @@ class RemoveShow(AbstractRequestHandler):
 
         # get our persistent_attributes
         attr = handler_input.attributes_manager.persistent_attributes
-        _perlist = attr['list']
-        _usecustomlist = attr['usecustomlist']
+        try:
+            _perlist = attr['list']
+            _usecustomlist = attr['usecustomlist']
+        except:
+            _perlist = None
+            _usecustomlist = False
         # user gave us nothing lets do some checks to make sure we have saved attributes
         if _list is None:
             # they didnt give us a list use the default
             # attr = handler_input.attributes_manager.persistent_attributes
-            _perlist = attr['list']
+            # _perlist = attr['list']
             # if default isnt set use watchlist
             if _perlist is None:
                 _list = 'watchlist'
                 _usecustomlist = False
             elif _perlist.lower() == 'watchlist' or _perlist.lower() == 'watch list':
                 _usecustomlist = False
+                _list = _perlist
             else:
                 _usecustomlist = True
-
-            # user has a custom list set
-            _list = _perlist
+                _list = _perlist
         else:
             _usecustomlist = True
             # this doesnt work
@@ -459,7 +463,7 @@ class RemoveShow(AbstractRequestHandler):
         if _usecustomlist is None:
             _usecustomlist = False
 
-        # if our list isnt empty then we can go ahead amd deal with the request
+        # if our list isnt empty then we can go ahead and deal with the request
         if _usecustomlist:
             url = 'https://api.trakt.tv/users/me/lists/' + _list + '/items/shows'
             r = requests.get(url, headers=headers)
@@ -482,6 +486,8 @@ class RemoveShow(AbstractRequestHandler):
                         # print(json.dumps(dcode[i], sort_keys=True, indent=4))
                         if bak.parse_delete_search('show', headers, dcode[i]['show'], _list, _usecustomlist, True):
                             reprompt = 's'
+                            # media_name, media_type, a_list
+                            bak.notify(movie, "show", _list, "removed")
                             handler_input.response_builder.speak("I have deleted " + o + " from the list " + _list).ask(
                                 reprompt)
                             return handler_input.response_builder.response
@@ -527,6 +533,8 @@ class RemoveShow(AbstractRequestHandler):
             y = b['show']
             if bak.parse_delete_search('show', headers, y, _list, False, False):
                 reprompt = 's'
+                # media_name, media_type, a_list
+                bak.notify(movie , "show", _list, "removed")
                 handler_input.response_builder.speak("I have deleted " + movie + " from the list " + _list)
                 return handler_input.response_builder.response
             else:
@@ -566,24 +574,28 @@ class RemoveMovie(AbstractRequestHandler):
 
         # get our persistent_attributes
         attr = handler_input.attributes_manager.persistent_attributes
-        _perlist = attr['list']
-        _usecustomlist = attr['usecustomlist']
+        try:
+            _perlist = attr['list']
+            _usecustomlist = attr['usecustomlist']
+        except:
+            _perlist = None
+            _usecustomlist = False
+        # TODO: move this list check to a function to make things neater/more readable
         # user gave us nothing lets do some checks to make sure we have saved attributes
         if _list is None:
             # they didnt give us a list use the default
             # attr = handler_input.attributes_manager.persistent_attributes
-            _perlist = attr['list']
+            # _perlist = attr['list']
             # if default isnt set use watchlist
             if _perlist is None:
                 _list = 'watchlist'
                 _usecustomlist = False
             elif _perlist.lower() == 'watchlist' or _perlist.lower() == 'watch list':
                 _usecustomlist = False
+                _list = _perlist
             else:
                 _usecustomlist = True
-
-            # user has a custom list set
-            _list = _perlist
+                _list = _perlist
         else:
             _usecustomlist = True
             # this doesnt work
@@ -664,6 +676,8 @@ class RemoveMovie(AbstractRequestHandler):
             y = b["movie"]
             if bak.parse_delete_search("movie", headers, y, _list, False, False):
                 reprompt = 's'
+                # media_name, media_type, a_list
+                bak.notify(movie ,b['type'], _list, "removed")
                 handler_input.response_builder.speak(
                     "I have deleted " + movie + " from the list " + _list)  # .ask(reprompt)
                 return handler_input.response_builder.response
@@ -1387,8 +1401,7 @@ class GetPopular(AbstractRequestHandler):
 
 
 # testing CanFulfilIntentHandler
-"""
-class CanFulfilIntentHandler(AbstractRequestHandler):
+class CanFulfillIntentRequest(AbstractRequestHandler):
     #Handler for can fulfil handle intent
 
     def can_handle(self, handler_input):
@@ -1399,7 +1412,8 @@ class CanFulfilIntentHandler(AbstractRequestHandler):
         fulfilintent = CanFulfillIntent(True)
         handler_input.response_builder.set_can_fulfill_intent(fulfilintent)
         return handler_input.response_builder.response
-"""
+
+
 # Register intent handlers
 sb.add_request_handler(GetPopular())
 sb.add_request_handler(JustStop())
@@ -1416,6 +1430,7 @@ sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
+sb.add_request_handler(CanFulfillIntentRequest())
 
 # Register exception handlers
 sb.add_exception_handler(CatchAllExceptionHandler())
