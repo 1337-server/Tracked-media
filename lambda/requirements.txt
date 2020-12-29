@@ -1,8 +1,9 @@
-ask-sdk-core>=1.15.0
-ask-sdk-s3-persistence-adapter>=1.0.0
-flask-ask-sdk>=0.9.8
-pytz
-codecov
+boto3==1.9.216
+ask-sdk-core==1.11.0
+ask-sdk-s3-persistence-adapter==1.0.0
+ask-sdk-dynamodb-persistence-adapter==1.15.0
+apprise>=0.8.9
 flake8>=2.5.0
 pytest-cov>=2.10.1
-apprise>=0.8.9
+pytz
+codecov

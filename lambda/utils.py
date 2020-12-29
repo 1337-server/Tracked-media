@@ -1,3 +1,6 @@
+import logging
+import os
+import boto3
 import datetime
 import json
 import logging
@@ -5,7 +8,9 @@ import requests
 import config
 import apprise
 
-logger = logging.getLogger('tipper')
+from botocore.exceptions import ClientError
+
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
@@ -187,8 +192,10 @@ def parse_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
         # lets see it
         if p:
             print(json.dumps(dcode3, sort_keys=True, indent=4))
+        return True
     else:
         logger.warning('adding to list error! Status code = ' + str(r2.status_code))
+        return False
 
 
 def parse_delete_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
@@ -488,3 +495,38 @@ def addOneMovie(_movieobj, _usecustom, headers, _list):
     else:
         logger.warning('adding to list error! Status code = ' + str(r2.status_code))
         return False
+
+
+def add_movies(_movieobj, use_custom, headers, _list):
+    values = """
+        {   "movies":[
+            
+                """ + _movieobj + """
+            
+        ],
+       "shows":[],
+       "seasons":[],
+       "episodes":[],
+       "people":[]
+    }
+    """
+    # u2= json.loads(u)
+    logger.debug('Status code = {}'.format(str(values)))
+    logger.debug('custom = ' + str(use_custom))
+    if use_custom and _list != 'watchlist' and _list != 'watch list':
+        urll = "https://api.trakt.tv/users/me/lists/" + _list + "/items"
+    else:
+        urll = 'https://api.trakt.tv/sync/watchlist'
+    logger.debug("url ={}".format(urll))
+    r2 = requests.post(urll, headers=headers, data=values)
+    # decode json
+    if r2.status_code == 200 or r2.status_code == 201:
+        # decode json
+        dcode3 = json.loads(r2.text)  # noqa F841
+        # lets see it
+        return True
+    else:
+        logger.error('adding to list error! Status code = ' + str(r2.status_code))
+        return False
+
+
