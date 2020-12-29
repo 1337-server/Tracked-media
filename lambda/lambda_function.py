@@ -218,10 +218,10 @@ class WhatsOn(AbstractRequestHandler):
                     "Try saying, Alexa ask Radar what is on.")
                 return handler_input.response_builder.response  # no idea what they user wanted
         else:
-             handler_input.response_builder.speak(
-                    "Im sorry i couldnt understand what you type you wanted").ask(
-                    "Try saying, Alexa ask Radar what is on.")
-             return handler_input.response_builder.response  # no idea what they user wanted
+            handler_input.response_builder.speak(
+                "Im sorry i couldnt understand what you type you wanted").ask(
+                "Try saying, Alexa ask Radar what is on.")
+            return handler_input.response_builder.response  # no idea what they user wanted
         # we didnt get a media, get both
         # OUR default items count
         _movieitemcount = 0
