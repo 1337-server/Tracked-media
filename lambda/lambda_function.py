@@ -14,7 +14,6 @@ import requests
 import gettext  # noqa F401
 import re  # noqa: F401
 
-from ask_sdk_model.slu.entityresolution import StatusCode
 from datetime import datetime
 from ask_sdk_s3.adapter import S3Adapter
 from ask_sdk_core.handler_input import HandlerInput
@@ -433,7 +432,7 @@ class RemoveShow(AbstractRequestHandler):
         try:
             _perlist = attr['list']
             _usecustomlist = attr['usecustomlist']
-        except:
+        except:  # noqa E722
             _perlist = None
             _usecustomlist = False
         # user gave us nothing lets do some checks to make sure we have saved attributes
@@ -534,7 +533,7 @@ class RemoveShow(AbstractRequestHandler):
             if bak.parse_delete_search('show', headers, y, _list, False, False):
                 reprompt = 's'
                 # media_name, media_type, a_list
-                bak.notify(movie , "show", _list, "removed")
+                bak.notify(movie, "show", _list, "removed")
                 handler_input.response_builder.speak("I have deleted " + movie + " from the list " + _list)
                 return handler_input.response_builder.response
             else:
@@ -677,7 +676,7 @@ class RemoveMovie(AbstractRequestHandler):
             if bak.parse_delete_search("movie", headers, y, _list, False, False):
                 reprompt = 's'
                 # media_name, media_type, a_list
-                bak.notify(movie ,b['type'], _list, "removed")
+                bak.notify(movie, b['type'], _list, "removed")
                 handler_input.response_builder.speak(
                     "I have deleted " + movie + " from the list " + _list)  # .ask(reprompt)
                 return handler_input.response_builder.response
@@ -1400,20 +1399,6 @@ class GetPopular(AbstractRequestHandler):
             # print("status code= "+str(r.status_code))
 
 
-# testing CanFulfilIntentHandler
-class CanFulfillIntentRequest(AbstractRequestHandler):
-    #Handler for can fulfil handle intent
-
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return is_request_type("CanFulfillIntentRequest")(handler_input)
-
-    def handle(self, handler_input):
-        fulfilintent = CanFulfillIntent(True)
-        handler_input.response_builder.set_can_fulfill_intent(fulfilintent)
-        return handler_input.response_builder.response
-
-
 # Register intent handlers
 sb.add_request_handler(GetPopular())
 sb.add_request_handler(JustStop())
@@ -1430,7 +1415,6 @@ sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
-sb.add_request_handler(CanFulfillIntentRequest())
 
 # Register exception handlers
 sb.add_exception_handler(CatchAllExceptionHandler())
