@@ -1,6 +1,7 @@
 # Tracked Media - A Trakt.tv API powered Alexa skill
-[![Build Status](https://travis-ci.com/1337-server/Trakt.tv-Alexa-skill.svg?branch=master)](https://travis-ci.com/1337-server/Trakt.tv-Alexa-skill)
-[![codecov](https://codecov.io/gh/1337-server/Trakt.tv-Alexa-skill/branch/master/graph/badge.svg?token=P3MW0Y5TNL)](https://codecov.io/gh/1337-server/Trakt.tv-Alexa-skill)
+[![Build Status](https://travis-ci.com/1337-server/Tracked-media.svg?branch=master)](https://travis-ci.com/1337-server/Tracked-media)
+[![codecov](https://codecov.io/gh/1337-server/Tracked-media/branch/master/graph/badge.svg?token=P3MW0Y5TNL)](https://codecov.io/gh/1337-server/Tracked-media)
+
 
 A simple Alexa app/skill to connect to the Trakt.tv API via your own trakt.tv account.
 
