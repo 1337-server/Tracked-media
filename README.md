@@ -32,18 +32,7 @@ settings should look something like this
 
 ![sample linking info ](sample.png)
 
-With that done, You can use the JSON editor and copy all of package.json into the JSON editor remember to keep the 
-```
-    "apis": {
-      "custom": {
-        "endpoint": {
-          "uri": "Your endpoiint aws-etc-etc"
-        },
-        "interfaces": []
-      }
-    },
-```
-if you are using the Alexa hosted version!
+With that done, You can use the JSON editor and copy all of package.json into the JSON editor
 
 After that you need to upload the lambda folder to either Alexa hosted or your own host.
 You will need to edit config.py to your own liking but most importantly remember to set your Trakt.tv API key with
@@ -59,7 +48,7 @@ Save & build and then deploy, and you should be good to enable the app in your A
 Enabling the app should take you to trakt.tv where you login and grants your own app access to your trakt.tv account.
 
 ## Usage
-###### Adding/removing movies or shows
+### Adding/removing movies or shows
 ```python
 "Alexa tell %myinvocationname to add the movie iron man"
 
@@ -69,14 +58,14 @@ Enabling the app should take you to trakt.tv where you login and grants your own
 
 "Alexa tell %myinvocationname to add the show The walking dead"
 ```
-###### Changing your default list
+### Changing your default list
 ```python
 "Alexa tell %myinvocationname set my list to watch list"
 
 "Alexa tell %myinvocationname set my list to 'example'"
 
 ```
-###### Finding what's on your calendar
+### Finding what's on your calendar
 ```python
 "Alexa ask %myinvocationname what is on Trakt today"
 
@@ -86,7 +75,7 @@ Enabling the app should take you to trakt.tv where you login and grants your own
 
 ```
 
-###### Finding if a movie or show is on your list
+### Finding if a movie or show is on your list
 ```python
 "Alexa ask %myinvocationname if the movie Avatar on a list"
 
@@ -95,7 +84,7 @@ Enabling the app should take you to trakt.tv where you login and grants your own
 ```
 
 
-###### Getting the popular list (this only works with movies)
+### Getting the popular list (this only works with movies)
 ```python
 "Alexa ask %myinvocationname Check the list box office"
 
