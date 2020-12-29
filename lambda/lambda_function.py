@@ -576,7 +576,7 @@ class RemoveMovie(AbstractRequestHandler):
         try:
             _perlist = attr['list']
             _usecustomlist = attr['usecustomlist']
-        except:
+        except ValueError:
             _perlist = None
             _usecustomlist = False
         # TODO: move this list check to a function to make things neater/more readable
