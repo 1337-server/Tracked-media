@@ -7,10 +7,10 @@ import json
 import config
 import prompts
 import bak
-import ask_sdk_core.utils as ask_utils  # noqa F401
 import os
-import locale  # noqa F401
 import requests
+import ask_sdk_core.utils as ask_utils  # noqa F401
+import locale  # noqa F401
 import gettext  # noqa F401
 import re  # noqa: F401
 
@@ -108,10 +108,7 @@ class WhatsOn(AbstractRequestHandler):
             # x=datetime.strptime(_date,'%Y-%m-%d')
             # z=x.strftime('%Y-%m-%d')
         # did they want a specific media ?
-        if _type is None:
-            # we got shit
-            print("shit")
-        else:
+        if _type is not None:
             # We got a movie ?
             _type1 = str(_type).lower()
             if _type1 == "movies" or _type1 == "movie" or _type1 == "films" or _type1 == "film":
@@ -131,9 +128,6 @@ class WhatsOn(AbstractRequestHandler):
                         # we need to parse the list and try to find the movie requested
                         _title = str(dcode[i]["movie"]['title'])
                         attr["movie"][i] = _title
-                        # print(_title)
-                        # _traktid=dcode[i]['ids']['trakt']
-                        # exit("yeet")
                         _movieitemcount += 1
                         i += 1
                     if (len(dcode) - 1) < 0:
@@ -223,7 +217,11 @@ class WhatsOn(AbstractRequestHandler):
                     "Im sorry i couldnt understand what you type you wanted").ask(
                     "Try saying, Alexa ask Radar what is on.")
                 return handler_input.response_builder.response  # no idea what they user wanted
-
+        else:
+             handler_input.response_builder.speak(
+                    "Im sorry i couldnt understand what you type you wanted").ask(
+                    "Try saying, Alexa ask Radar what is on.")
+             return handler_input.response_builder.response  # no idea what they user wanted
         # we didnt get a media, get both
         # OUR default items count
         _movieitemcount = 0
