@@ -1,14 +1,10 @@
 import logging
-import os
-import boto3
 import datetime
 import json
 import logging
 import requests
 import config
 import apprise
-
-from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -500,9 +496,7 @@ def addOneMovie(_movieobj, _usecustom, headers, _list):
 def add_movies(_movieobj, use_custom, headers, _list):
     values = """
         {   "movies":[
-            
-                """ + _movieobj + """
-            
+                """ + _movieobj + """   
         ],
        "shows":[],
        "seasons":[],
@@ -528,5 +522,3 @@ def add_movies(_movieobj, use_custom, headers, _list):
     else:
         logger.error('adding to list error! Status code = ' + str(r2.status_code))
         return False
-
-

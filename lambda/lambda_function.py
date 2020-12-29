@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-import random
 import logging
 import os
 import requests
@@ -35,12 +33,11 @@ _usecustomlist = False
 
 @sb.request_handler(
     can_handle_func=lambda input:
-        is_request_type("LaunchRequest")(input) or
-        is_intent_name("AddMovie")(input))
+        is_request_type("LaunchRequest")(input)
+        or is_intent_name("AddMovie")(input))
 def add_movie_intent_handler(handler_input):
     """Handler for Add Movie Intent."""
     # type: (HandlerInput) -> Response
-    
     # get our persistent_attributes
     # if the user has launched the app greet them
     # set out session attributes
@@ -71,8 +68,10 @@ def add_movie_intent_handler(handler_input):
             "There is a problem with authorisation, please logout and log back in.")  # .ask(reprompt)
         return handler_input.response_builder.response
     # Set all our headers for the trakt-api
-    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + h, 'trakt-api-version': '2',
-                   'trakt-api-key': clientid}
+    headers = {'Content-Type': 'application/json',
+               'Authorization': 'Bearer ' + h,
+               'trakt-api-version': '2',
+               'trakt-api-key': clientid}
     print("Header= " + str(headers))
     # Get the movie name and throw it onto the movie var
     movie = get_slot_value(handler_input=handler_input, slot_name="movieName")
@@ -100,7 +99,7 @@ def add_movie_intent_handler(handler_input):
         _liststring = str(_list)  # noqa F841
         if _list.lower() == 'watchlist' or _list.lower() == 'watch list':
             _usecustomlist = False  # noqa F841
-    print("_usecustomlist=" +str(_usecustomlist))
+    print("_usecustomlist=" + str(_usecustomlist))
     # search for move and get the object
     b = utils.search(movie, headers, showtype, True)
     if b['error']:
@@ -181,7 +180,7 @@ def add_show_intent_handler(handler_input):
 def choose_list_intent_handler(handler_input):
     """Handler for Choose List Intent."""
     # type: (HandlerInput) -> Response
-    
+
     # TODO Check that the user has supplied a value or we will throw errors
     # get the value of listName and throw it onto _thelist
     _thelist = get_slot_value(handler_input=handler_input, slot_name="listName")
@@ -193,14 +192,15 @@ def choose_list_intent_handler(handler_input):
         handler_input.response_builder.speak(reprompt).ask(reprompt)
         return handler_input.response_builder.response
     # Set all our headers for the trakt-api
-    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + h, 'trakt-api-version': '2',
-                   'trakt-api-key': clientid}
+    headers = {'Content-Type': 'application/json',
+               'Authorization': 'Bearer ' + h,
+               'trakt-api-version': '2',
+               'trakt-api-key': clientid}
     session_attr = handler_input.attributes_manager.session_attributes
     try:
         session_attr['list']
     except KeyError:
         session_attr['list'] = None
-    
     # TODO check if the list is empty and different
     # NEED TO CHECK IF THE LIST ISNT NULL FIRST
     # if the user is wanting their default watch list we can save time and use defaults
@@ -284,6 +284,7 @@ def choose_list_intent_handler(handler_input):
         # revert to default settings and store them
         handler_input.response_builder.speak("There was a problem reaching Trackt.tv api").ask("")
         return handler_input.response_builder.response
+
 
 @sb.request_handler(
     can_handle_func=is_intent_name("RemoveShow"))
@@ -421,6 +422,7 @@ def remove_show_intent_handler(handler_input):
         handler_input.response_builder.speak('No list provided or error').ask(reprompt)
         return handler_input.response_builder.response
 
+
 @sb.request_handler(
     can_handle_func=is_intent_name("RemoveMovie"))
 def remove_movie_intent_handler(handler_input):
@@ -556,6 +558,7 @@ def remove_movie_intent_handler(handler_input):
         reprompt = 'Would you like me to remove it from your watchlist ?'
         handler_input.response_builder.speak('No list provieded. or error').ask(reprompt)
         return handler_input.response_builder.response
+
 
 @sb.request_handler(
     can_handle_func=is_intent_name("WhatsOn"))
@@ -715,7 +718,6 @@ def whats_on_intent_handler(handler_input):
     #        "Im sorry i couldnt understand what you type you wanted").ask(
     #        "Try saying, Alexa ask Radar what is on.")
     #    return handler_input.response_builder.response  # no idea what they user wanted
-    
     # we didnt get a media, get both
     # OUR default items count
     _movieitemcount = 0
@@ -936,6 +938,7 @@ def find_show_handler(handler_input):
         handler_input.response_builder.speak(movie + " isnt on any of your lists.").ask(reprompt)
         return handler_input.response_builder.response
 
+
 @sb.request_handler(can_handle_func=is_intent_name("FindMovie"))
 def find_movie_handler(handler_input):
     """Handler for Find Movie Intent"""
@@ -993,8 +996,8 @@ def help_intent_handler(handler_input):
 
 @sb.request_handler(
     can_handle_func=lambda input:
-        is_intent_name("AMAZON.CancelIntent")(input) or
-        is_intent_name("AMAZON.StopIntent")(input))
+        is_intent_name("AMAZON.CancelIntent")(input)
+        or is_intent_name("AMAZON.StopIntent")(input))
 def cancel_and_stop_intent_handler(handler_input):
     """Single handler for Cancel and Stop Intent."""
     # type: (HandlerInput) -> Response
@@ -1025,8 +1028,8 @@ def session_ended_request_handler(handler_input):
 
 @sb.request_handler(
     can_handle_func=lambda input:
-        is_intent_name("AMAZON.YesIntent")(input) or
-        is_intent_name("AMAZON.RepeatIntent")(input))
+        is_intent_name("AMAZON.YesIntent")(input)
+        or is_intent_name("AMAZON.RepeatIntent")(input))
 def read_out_handler(handler_input):
     """Handler for Yes/Repeat Intent This is used as a list reader"""
     # type: (HandlerInput) -> Response
@@ -1074,7 +1077,6 @@ def read_out_handler(handler_input):
                    'trakt-api-version': '2',
                    'trakt-api-key': clientid}
         _usecustomlist = False
-        
         # TODO find a better way to match list names and also fix _usecustomlist not being set correctly
         # they didnt give us a list use the default
         # if a list isnt set use watchlist
@@ -1089,14 +1091,14 @@ def read_out_handler(handler_input):
         while i < _size:
             # for j in range(len(dcode2)):
             # we need to parse the list and try to find the movie requested
-            #if utils.addOneMovie(x[str(i)], _usecustomlist, headers, _list):
+            # if utils.addOneMovie(x[str(i)], _usecustomlist, headers, _list):
             #    _alexaOut += str(",  " + x[str(i)]['title'])
-            #else:
+            # else:
             #    _alexaOut += str(" ")
             _alexaOut += str(",  " + x[str(i)]['title'])
             if i == 0:
                 # "ids": {""" + _movieobj + """}
-                movie_list += """{"ids": {"trakt": """ + str(x[str(i)]['id'])+"}}"
+                movie_list += """{"ids": {"trakt": """ + str(x[str(i)]['id']) + "}}"
             else:
                 movie_list += """,\n{"ids": { "trakt": """ + str(x[str(i)]['id']) + "}}"
             i += 1
@@ -1104,7 +1106,6 @@ def read_out_handler(handler_input):
             _alexaOut += str(". ")
         else:
             _alexaOut = "I couldnt add the movies, there was an error"
-        
         handler_input.response_builder.speak(str(_alexaOut)).ask("Say Repeat to hear the list again")
         attr['readShows'] = False
         attr['readMovies'] = False
@@ -1116,8 +1117,8 @@ def read_out_handler(handler_input):
         attr['movie'] = {}
         return handler_input.response_builder.response
     # shows read out here
-    if attr['readShows'] and not attr['readMovies'] or is_intent_name("AMAZON.RepeatIntent") and \
-        attr['repeat'] == 'readShows':
+    if attr['readShows'] and not attr['readMovies'] or is_intent_name("AMAZON.RepeatIntent") \
+            and attr['repeat'] == 'readShows':
         attr = handler_input.attributes_manager.session_attributes
         x = attr["show"]
         _size = len(x)
@@ -1220,7 +1221,6 @@ def read_out_handler(handler_input):
     return handler_input.response_builder.response
 
 
-
 @sb.request_handler(can_handle_func=is_intent_name("AMAZON.NoIntent"))
 def no_handler(handler_input):
     """Handler for No Intent, only if the player said no for
@@ -1240,11 +1240,10 @@ def no_handler(handler_input):
     return handler_input.response_builder.response
 
 
-
 @sb.request_handler(can_handle_func=lambda input:
-                    is_intent_name("AMAZON.FallbackIntent")(input) or
-                    is_intent_name("AMAZON.YesIntent")(input) or
-                    is_intent_name("AMAZON.NoIntent")(input))
+                    is_intent_name("AMAZON.FallbackIntent")(input)
+                    or is_intent_name("AMAZON.YesIntent")(input)
+                    or is_intent_name("AMAZON.NoIntent")(input))
 def fallback_handler(handler_input):
     """AMAZON.FallbackIntent is only available in en-US locale.
     This handler will not be triggered except in that locale,
@@ -1253,8 +1252,8 @@ def fallback_handler(handler_input):
     # type: (HandlerInput) -> Response
     session_attr = handler_input.attributes_manager.session_attributes
 
-    if ("game_state" in session_attr and
-            session_attr["game_state"]=="STARTED"):
+    if ("game_state" in session_attr
+            and session_attr["game_state"] == "STARTED"):
         speech_text = (
             "The {} skill can't help you with that.  "
             "Try guessing a number between 0 and 100. ".format(SKILL_NAME))
@@ -1287,7 +1286,7 @@ def all_exception_handler(handler_input, exception):
     """
     # type: (HandlerInput, Exception) -> Response
     logger.error(exception, exc_info=True)
-    #speech = "Sorry, I can't understand that. Please say again!!"
+    # speech = "Sorry, I can't understand that. Please say again!!"
     speech = "error: " + str(exception)
     handler_input.response_builder.speak(speech).ask(speech)
     return handler_input.response_builder.response
