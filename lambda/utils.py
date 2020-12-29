@@ -6,6 +6,9 @@ import requests
 import config
 import apprise
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 def notify(media_name, media_type, a_list, action="added"):
     # If the user has disabled notifications
