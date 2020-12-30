@@ -4,10 +4,10 @@ python:
   - "3.7"
 before_install:
   - sudo apt-get install libgnutls28-dev
-install: "pip install -r Tracked-Media/lambda/requirements.txt"
+install: "pip install -r lambda/requirements.txt"
 script:
   - flake8 --ignore=E501,W503 Tracked-Media/lambda
-  - coverage run Tracked-Media/lambda/lambda_function.py
+  - coverage run lambda/lambda_function.py
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - codecov
