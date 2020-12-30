@@ -101,7 +101,7 @@ Enabling the app should take you to trakt.tv where you login and grants your own
 
 ### This app/skill uses the Trakt.tv API 
 
-<img src="https://raw.githubusercontent.com/1337-server/Trakt.tv-Alexa-skill/master/assets/images/trakt-wide-red-black.png" width="300" />
+<img src="https://raw.githubusercontent.com/1337-server/Tracked-media/master_1/assets/images/trakt-wide-red-black.png" width="300" />
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
