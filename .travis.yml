@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get install libgnutls28-dev
 install: "pip install -r lambda/requirements.txt"
 script:
-  - flake8 --ignore=E501,W503 Tracked-Media/lambda
+  - flake8 --ignore=E501,W503 lambda
   - coverage run lambda/lambda_function.py
 after_success:
   - bash <(curl -s https://codecov.io/bash)
