@@ -1,13 +1,17 @@
-dist: focal
 language: python
 python:
-  - "3.7"
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
+  - 3.9
 before_install:
-  - sudo apt-get install libgnutls28-dev
-install: "pip install -r lambda/requirements.txt"
-script:
-  - flake8 --ignore=E501,W503 lambda
-  - coverage run lambda/lambda_function.py
+  - python --version
+  - pip install -U pip
+  - pip install -U pytest
+  - pip install codecov
+install:
+  - pip install ".[test]" . # install package + test dependencies
+script: pytest # run tests
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
-  - codecov
+  - codecov # submit coverage
