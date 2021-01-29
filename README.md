@@ -105,3 +105,7 @@ Enabling the app should take you to trakt.tv where you login and grants your own
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## The reason for this skill
+I needed a way to add movies/shows from alexa to radarr/sonarr but there was no app/skill or source code that didnt require opening your own server up to the internet.
+This gets around that by only having other apps read from the trakt.tv lists and removes the need to open ports on your server.
