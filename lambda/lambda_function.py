@@ -117,7 +117,7 @@ def add_movie_intent_handler(handler_input):
     else:
         # TODO Fix the notify to allow errors
         # utils.notify(movie, b['type'], _list)
-        handler_input.response_builder.speak("There was a problem adding " + movie + " to your list " + _list)  # .ask(reprompt)
+        handler_input.response_builder.speak("There was a problem adding " + movie + " to your list " + _list)
     return handler_input.response_builder.response
 
 
@@ -692,7 +692,7 @@ def whats_on_intent_handler(handler_input):
                     return handler_input.response_builder.response
                 else:
                     handler_input.response_builder.speak("you have no new episodes on " + str(z))
-                    return handler_input.response_builder.response  # print("you have no new movies or episodes on today")
+                    return handler_input.response_builder.response
             else:
                 if z == m:
                     handler_input.response_builder.speak("You have " + str(
