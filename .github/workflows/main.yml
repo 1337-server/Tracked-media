@@ -41,7 +41,8 @@ jobs:
           name: codecov-umbrella # optional
           fail_ci_if_error: false # optional (default = false)
           verbose: true # optional (default = false)
-          
+      - name: Install codecov
+        run: pip install codecov    
       - name: Upload coverage reports to Codecov
         run: |
           codecov
