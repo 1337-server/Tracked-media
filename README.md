@@ -1,5 +1,5 @@
 # Tracked Media - A Trakt.tv API powered Alexa skill
-[![Build Status](https://travis-ci.com/1337-server/Tracked-media.svg?branch=master)](https://travis-ci.com/1337-server/Tracked-media)
+[![CI](https://github.com/1337-server/Tracked-media/actions/workflows/main.yml/badge.svg)](https://github.com/1337-server/Tracked-media/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/1337-server/Tracked-media/branch/master/graph/badge.svg?token=P3MW0Y5TNL)](https://codecov.io/gh/1337-server/Tracked-media)
 
 
