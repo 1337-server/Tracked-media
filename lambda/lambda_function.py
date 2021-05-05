@@ -660,12 +660,12 @@ def get_popular_intent_handler(handler_input):
             # and then ask the user if they want to save
             # have and then deal with it in the AMAZON.YesIntent
         else:
-            handler_input.response_builder.speak("you have all the items from this list")
+            handler_input.response_builder.speak("You have all the items from this list")
             # .ask("Do you want to add the missing movies to your list ?")
             return handler_input.response_builder.response
             # print("you have all the items from this list")
     else:
-        handler_input.response_builder.speak("I couldnt contact the trakt.tv api")
+        handler_input.response_builder.speak("I couldn't contact the trakt.tv api")
         # .ask("Do you want to add the missing movies to your list ?")
         return handler_input.response_builder.response
         # print("status code= "+str(r.status_code))
@@ -812,7 +812,7 @@ def read_out_handler(handler_input):
     except ValueError:
         attr['active_request'] = ''
     _alexa_out = ''
-    # do we want to add the movies to our defualt list ?
+    # do we want to add the movies to our default list ?
     if attr['active_request'] == 'AddMovies':
         # movies read out here
         x = attr["movie"]
@@ -825,8 +825,7 @@ def read_out_handler(handler_input):
         h = handler_input.request_envelope.context.system.user.access_token
         # If we are not auth, let the user know
         if not h:
-            handler_input.response_builder.speak(
-                language.AUTH_ERROR)
+            handler_input.response_builder.speak(language.AUTH_ERROR)
             return handler_input.response_builder.response
         # Set all our headers for the trakt-api
         headers = utils.build_headers(h, clientid)
@@ -871,8 +870,8 @@ def read_out_handler(handler_input):
         attr['movie'] = {}
         return handler_input.response_builder.response
     # shows read out here
-    if attr['readShows'] and not attr['readMovies'] or is_intent_name("AMAZON.RepeatIntent") \
-            and attr['repeat'] == 'readShows':
+    if attr['readShows'] and not attr['readMovies'] \
+            or is_intent_name("AMAZON.RepeatIntent") and attr['repeat'] == 'readShows':
         attr = handler_input.attributes_manager.session_attributes
         x = attr["show"]
         _size = len(x)
@@ -891,8 +890,8 @@ def read_out_handler(handler_input):
         attr['repeat'] = 'readShows'
         return handler_input.response_builder.response
     # movies read out here
-    if attr['readMovies'] and not attr['readShows'] or \
-            is_intent_name("AMAZON.RepeatIntent") and attr['repeat'] == 'readMovies':
+    if attr['readMovies'] and not attr['readShows'] \
+            or is_intent_name("AMAZON.RepeatIntent") and attr['repeat'] == 'readMovies':
         # movies read out here
         attr = handler_input.attributes_manager.session_attributes
         x = attr["movie"]
@@ -944,6 +943,7 @@ def read_out_handler(handler_input):
     # read out box office
     # repeat wont work
     if attr['readBoxOffice'] or is_intent_name("AMAZON.RepeatIntent") and attr['repeat'] == 'readBoxOffice':
+        # TODO: fix bug not reading out if there are 10 items.
         # movies read out here
         x = attr["movie"]
         _size = len(x)
@@ -951,9 +951,8 @@ def read_out_handler(handler_input):
         _alexa_out = 'Here is the list of movies you asked for'
         i = 0
         while i < _size:
-            # for j in range(len(dcode2)):
             # we need to parse the list and try to find the movie requested
-            _alexa_out += f", {x[str(i)]['title']}"
+            _alexa_out += ", " + str(x[str(i)]['title']).replace("-", "").replace(":", "")
             i += 1
         _alexa_out += ". Would you like me to add the movies to your default list ?"
         attr['readShows'] = False
@@ -963,7 +962,7 @@ def read_out_handler(handler_input):
         attr['repeat'] = 'readBoxOffice'
         attr['readBoxOffice'] = False
         print(_alexa_out)
-        handler_input.response_builder.speak(_alexa_out)
+        handler_input.response_builder.speak(str(_alexa_out)).ask(language.REPEAT_LIST)
         return handler_input.response_builder.response
     # user got here with no lists
     attr['readShows'] = False
