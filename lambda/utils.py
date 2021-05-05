@@ -7,6 +7,7 @@ import apprise
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+TRAKT_WATCHLIST = 'https://api.trakt.tv/sync/watchlist'
 
 
 def notify(media_name, media_type, a_list, action="added"):
@@ -43,7 +44,7 @@ def notify(media_name, media_type, a_list, action="added"):
                 title=config.notify_title.format(media_type, action),
                 body=config.notify_body.format(media_name.title(), media_type, a_list, action),
             )
-        except:  # noqa: E722
+        except Exception:  # noqa: E722
             logging.error("Failed sending discord apprise notification.  Continueing processing...")
 
 
@@ -84,13 +85,10 @@ def easygeturl(url, headers, p=bool):
             return dcode[0]
         else:
             print("status code= " + str(r.status_code))
-            return
     else:
         if r.status_code == 200 or r.status_code == 201:
             dcode = json.loads(r.text)
             return dcode[0]
-        else:
-            return
 
 
 # OUR MAIN SEARCH ENGINE
@@ -104,46 +102,29 @@ def search(q, h, t, p=bool):
     m['error'] = True
     # get our info
     r = requests.get(url, headers=h)
-    # if logging is on lets print stuff out
-    if p is True:
-        print("search status code= " + str(r.status_code))
-        if r.status_code == 200 or r.status_code == 201:
-            print(r.text)
-            dcode = json.loads(r.text)
-            # m = dcode[0][t]
-            if len(dcode) < 1:
-                m['error'] = True
-                return m
-            m = dcode[0]
-            # this might cause problems if we get less than 3 results
-            m['2nd'] = dcode[1]
-            m['3rd'] = dcode[2]
-            m['error'] = False
-            print(json.dumps(m, sort_keys=True, indent=4))
-            return m
-        else:
+    print("search status code= " + str(r.status_code))
+    if r.status_code == 200 or r.status_code == 201:
+        print(r.text)
+        dcode = json.loads(r.text)
+        # m = dcode[0][t]
+        if len(dcode) < 1:
             m['error'] = True
-            print("search status code= " + str(r.status_code))
             return m
+        m = dcode[0]
+        # this might cause problems if we get less than 3 results
+        m['2nd'] = dcode[1]
+        m['3rd'] = dcode[2]
+        m['error'] = False
+        print(json.dumps(m, sort_keys=True, indent=4))
     else:
-        if r.status_code == 200 or r.status_code == 201:
-            dcode = json.loads(r.text)
-            if len(dcode) < 1:
-                m['error'] = True
-                return m
-            m = dcode[0]
-            # this might cause problems if we get less than 3 results
-            m['2nd'] = dcode[1]
-            m['3rd'] = dcode[2]
-            m['error'] = False
-            return m
-        else:
-            m['error'] = True
-            return m
+        m['error'] = True
+        print("search status code= " + str(r.status_code))
+
     return m
 
 
 def parse_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
+    print(typ, headers, s_obj, our_list, _usecustom, p)
     if typ == 'movie':
         values = """
         {   "movies":[
@@ -175,10 +156,10 @@ def parse_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
         """
     # u2= json.loads(u)
     if _usecustom:
-        urll = "https://api.trakt.tv/users/me/lists/" + our_list + "/items"
+        urll = f"https://api.trakt.tv/users/me/lists/{our_list}/items"
         # print(json.dumps(u, sort_keys=True, indent=4))
     else:
-        urll = 'https://api.trakt.tv/sync/watchlist'
+        urll = TRAKT_WATCHLIST
     r2 = requests.post(urll, headers=headers, data=values)
     # decode json
     if r2.status_code == 200 or r2.status_code == 201:
@@ -189,7 +170,7 @@ def parse_search(typ, headers, s_obj, our_list, _usecustom=bool, p=bool):
             print(json.dumps(dcode3, sort_keys=True, indent=4))
         return True
     else:
-        logger.warning('adding to list error! Status code = ' + str(r2.status_code))
+        logger.warning('[utils.parse_search] Adding to list error! Status code = ' + str(r2.status_code))
         return False
 
 
@@ -270,7 +251,7 @@ def search_lists(_movieobj, _alt, headers, _type):
             o = dcode[i]['ids']['slug']
             # print(str(o) + " is our trakt id")
             # if our list name matches the list given
-            url2 = 'https://api.trakt.tv/users/me/lists/' + str(o) + '/items'
+            url2 = f'https://api.trakt.tv/users/me/lists/{o}/items'
             r2 = requests.get(url2, headers=headers)
             j = 0
             if r2.status_code == 200 or r.status_code == 201:
@@ -293,10 +274,10 @@ def search_lists(_movieobj, _alt, headers, _type):
                         # exit("yeet")
                     j += 1
             i += 1
-        if _foundmatch is not True:
+        if not _foundmatch:
             # print ( "didnt find in custom list, checking watchlist" )
             # https://api.trakt.tv/sync/watchlist
-            url = 'https://api.trakt.tv/sync/watchlist'
+            url = TRAKT_WATCHLIST
             r3 = requests.get(url, headers=headers)
             i = 0
             if r3.status_code == 200 or r.status_code == 201:
@@ -342,7 +323,7 @@ def list_cache(headers):
     r = requests.get(url, headers=headers)
     if r.status_code == 200 or r.status_code == 201:
         dcode = json.loads(r.text)
-        # print(json.dumps(dcode, sort_keys=True, indent=4))
+        print(json.dumps(dcode, sort_keys=True, indent=4))
         i = 0
         # for each list in the array
         while i < len(dcode):
@@ -358,13 +339,11 @@ def list_cache(headers):
                 while j < len(dcode2):
                     # for j in range(len(dcode2)):
                     _type = str(dcode2[j]['type'])
-                    _title = dcode2[j][_type]['title']
-                    _traktid = dcode2[j][_type]['ids']['trakt']
                     # a[i]["media"][j] = {_title:_traktid}
                     a[i]["media"][j] = dcode2[j]
                     j += 1
             i += 1
-        url = 'https://api.trakt.tv/sync/watchlist'
+        url = TRAKT_WATCHLIST
         r3 = requests.get(url, headers=headers)
         w = i
         a[w] = {"name": "watchlist", "media": {}}
@@ -388,13 +367,11 @@ def list_cache(headers):
             a['error'] = True
             a['found'] = False
             a['list'] = ""
-            return a  # return False
     else:
-        # print ( "couldnt reach trakt" )
+        print("couldnt reach trakt")
         a['error'] = True
         a['found'] = False
         a['list'] = ""
-        return a  # return False
     # save our lists to cache
     return a
 
@@ -460,7 +437,7 @@ def listparser(_mywatchlist, _boxoffice, _listtype):
     return _notfound
 
 
-def addOneMovie(_movieobj, _usecustom, headers, _list):
+def add_one_movie(_movieobj, _usecustom, headers, _list):
     values = """
         {   "movies":[
           {
@@ -477,9 +454,9 @@ def addOneMovie(_movieobj, _usecustom, headers, _list):
     """
     # u2= json.loads(u)
     if _usecustom:
-        urll = "https://api.trakt.tv/users/me/lists/" + _list + "/items"
+        urll = f"https://api.trakt.tv/users/me/lists/{_list}/items"
     else:
-        urll = 'https://api.trakt.tv/sync/watchlist'
+        urll = TRAKT_WATCHLIST
     r2 = requests.post(urll, headers=headers, data=values)
     # decode json
     if r2.status_code == 200 or r2.status_code == 201:
@@ -488,7 +465,7 @@ def addOneMovie(_movieobj, _usecustom, headers, _list):
         # lets see it
         return True
     else:
-        logger.warning('adding to list error! Status code = ' + str(r2.status_code))
+        logger.error(f'[UTILS.aom]adding to list error! Status code = {r2.status_code}')
         return False
 
 
@@ -504,13 +481,13 @@ def add_movies(_movieobj, use_custom, headers, _list):
     }
     """
     # u2= json.loads(u)
-    logger.debug('Status code = {}'.format(str(values)))
-    logger.debug('custom = ' + str(use_custom))
+    logger.info('Status code = {}'.format(str(values)))
+    logger.info('custom = ' + str(use_custom))
     if use_custom and _list != 'watchlist' and _list != 'watch list':
         urll = "https://api.trakt.tv/users/me/lists/" + _list + "/items"
     else:
-        urll = 'https://api.trakt.tv/sync/watchlist'
-    logger.debug("url ={}".format(urll))
+        urll = TRAKT_WATCHLIST
+    logger.info("url ={}".format(urll))
     r2 = requests.post(urll, headers=headers, data=values)
     # decode json
     if r2.status_code == 200 or r2.status_code == 201:
@@ -519,5 +496,57 @@ def add_movies(_movieobj, use_custom, headers, _list):
         # lets see it
         return True
     else:
-        logger.error('adding to list error! Status code = ' + str(r2.status_code))
+        logger.error('[UTILS.am]Adding to list error! Status code = ' + str(r2.status_code))
         return False
+
+
+def get_list(_list, persistent_attributes):
+    if _list is not None and (_list.lower() != 'watchlist' and _list.lower() != 'watch list'):
+        return _list, True
+    else:
+        # if default isnt set use watchlist
+        if "list" in persistent_attributes:
+            if persistent_attributes["list"] != 'watchlist' and persistent_attributes["list"] != 'watch list':
+                _list = persistent_attributes["list"]
+                _usecustomlist = True
+            else:
+                _list = 'watchlist'
+                _usecustomlist = False
+        else:
+            _list = 'watchlist'
+            _usecustomlist = False
+    return _list, _usecustomlist
+
+
+def get_popular_list(list_type):
+    # if we got nothing set the default
+    if list_type is None:
+        list_type = 'boxoffice'
+    # fixing box office to slug type
+    if list_type == 'box office':
+        list_type = 'boxoffice'
+    x = ('popular', ' boxoffice', ' box office', 'trending', 'collected', 'played', 'watched')
+    if list_type not in x:
+        list_type = 'boxoffice'
+    return list_type
+
+
+def build_headers(access_token, client_id):
+    return {'Content-Type': 'application/json',
+            'Authorization': f'Bearer {access_token}',
+            'trakt-api-version': '2',
+            'trakt-api-key': client_id}
+
+
+def list_tester(user_list, session_list, watch_lists):
+    try:
+        session_list['list']
+    except KeyError:
+        session_list['list'] = None
+    if user_list is None and session_list['list'] is None:
+        return True
+    if not user_list and not session_list['list']:
+        return True
+    if user_list.lower() in watch_lists:
+        return True
+    return False
