@@ -9,8 +9,8 @@ import language
 
 from ask_sdk_core.skill_builder import CustomSkillBuilder
 from ask_sdk_core.utils import is_request_type, is_intent_name, get_slot_value
-from ask_sdk_core.handler_input import HandlerInput
-from ask_sdk_model import Response
+from ask_sdk_core.handler_input import HandlerInput  # noqa: F401
+from ask_sdk_model import Response  # noqa: F401
 from ask_sdk_s3.adapter import S3Adapter
 from datetime import datetime
 
@@ -28,7 +28,7 @@ is_auth = False
 
 
 @sb.request_handler(can_handle_func=lambda input: is_request_type("LaunchRequest")(input)
-                                                  or is_intent_name("AddMovie")(input))
+                    or is_intent_name("AddMovie")(input))
 def add_movie_intent_handler(handler_input):
     """Handler for Add Movie Intent."""
 
@@ -759,7 +759,7 @@ def help_intent_handler(handler_input):
 
 
 @sb.request_handler(can_handle_func=lambda input: is_intent_name("AMAZON.CancelIntent")(input)
-                                                  or is_intent_name("AMAZON.StopIntent")(input))
+                    or is_intent_name("AMAZON.StopIntent")(input))
 def cancel_and_stop_intent_handler(handler_input):
     """Single handler for Cancel and Stop Intent."""
 
@@ -785,7 +785,8 @@ def session_ended_request_handler(handler_input):
     return handler_input.response_builder.response
 
 
-@sb.request_handler(can_handle_func=lambda input: is_intent_name("AMAZON.YesIntent")(input) or is_intent_name("AMAZON.RepeatIntent")(input))
+@sb.request_handler(can_handle_func=lambda input: is_intent_name("AMAZON.YesIntent")(input)
+                    or is_intent_name("AMAZON.RepeatIntent")(input))
 def read_out_handler(handler_input):
     """Handler for Yes/Repeat Intent This is used as a list reader"""
 
