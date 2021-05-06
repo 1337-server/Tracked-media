@@ -199,7 +199,7 @@ def parse_delete_search(typ, headers, s_obj, our_list, _usecustom=bool):
             "ids": {
               "trakt": """ + str(s_obj['ids']['trakt']) + """
             }
-            } 
+            }
         ],
            "seasons":[],
            "episodes":[],

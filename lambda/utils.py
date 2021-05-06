@@ -4,7 +4,6 @@ import logging
 import requests
 import config
 import apprise
-import language
 import trakt_api
 
 logger = logging.getLogger(__name__)
