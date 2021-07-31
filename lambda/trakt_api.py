@@ -75,11 +75,11 @@ def search(q, h, t, p=bool):
             return m
         m = dcode[0]
         try:
-             m['2nd'] = dcode[1]
-             m['3rd'] = dcode[2]
+            m['2nd'] = dcode[1]
+            m['3rd'] = dcode[2]
         except IndexError:
-             m['2nd'] = {}
-             m['3rd'] = {}
+            m['2nd'] = {}
+            m['3rd'] = {}
         m['error'] = False
         print(json.dumps(m, sort_keys=True, indent=4))
     else:
