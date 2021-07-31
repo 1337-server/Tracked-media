@@ -74,9 +74,12 @@ def search(q, h, t, p=bool):
             m['error'] = True
             return m
         m = dcode[0]
-        # this might cause problems if we get less than 3 results
-        m['2nd'] = dcode[1]
-        m['3rd'] = dcode[2]
+        try:
+             m['2nd'] = dcode[1]
+             m['3rd'] = dcode[2]
+        except IndexError:
+             m['2nd'] = {}
+             m['3rd'] = {}
         m['error'] = False
         print(json.dumps(m, sort_keys=True, indent=4))
     else:
