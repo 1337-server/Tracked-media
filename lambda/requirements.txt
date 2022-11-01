@@ -7,3 +7,4 @@ flake8>=2.5.0
 pytest-cov>=2.10.1
 pytz
 codecov
+urllib3>=1.26.5 # not directly required, pinned by Snyk to avoid a vulnerability
